@@ -1,0 +1,118 @@
+
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import {
+  PieChart, Pie, Cell, Legend,
+  LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid
+} from "recharts";
+
+function App() {
+  const [data, setData] = useState(null);
+
+  const fetchData = async () => {
+    try {
+      const res = await axios.get("http://localhost:8000/run-model");
+      setData(res.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+    const interval = setInterval(fetchData, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // ✅ SAFE GUARD (very important)
+  if (!data || !data.latest) return <h2>Loading...</h2>;
+
+  const yieldData = [
+    { name: "Heavy", value: data.latest.yields?.heavy || 0 },
+    { name: "Medium", value: data.latest.yields?.medium || 0 },
+    { name: "Light", value: data.latest.yields?.light || 0 }
+  ];
+
+  const COLORS = ["#ff4d4d", "#4da6ff", "#33cc33"];
+
+  const getColor = () => {
+    if (data.latest.prediction > data.latest.upper) return "red";
+    if (data.latest.prediction < data.latest.lower) return "orange";
+    return "green";
+  };
+
+  return (
+    <div style={{ padding: "20px", fontFamily: "Arial", background: "#F0F2F5" }}>
+      
+      <h1>🔥 DCU Coke Drum Dashboard</h1>
+      <p>Last Updated: {data.latest.timestamp}</p>
+
+      {/* KPI Cards */}
+      <div style={{ display: "flex", gap: "20px", marginTop: "20px" }}>
+
+        <div style={card}>
+          <h3>HGI Prediction</h3>
+          <h1 style={{ color: getColor() }}>{data.latest.prediction}</h1>
+        </div>
+
+        <div style={card}>
+          <h3>Target Range</h3>
+          <p>{data.latest.lower} - {data.latest.upper}</p>
+        </div>
+
+        <div style={card}>
+          <h3>Drum Status</h3>
+          <p>D3908: {data.latest.drum_status?.drum1}</p>
+          <p>D3909: {data.latest.drum_status?.drum2}</p>
+        </div>
+
+      </div>
+
+      {/* Flags */}
+      <div style={{ marginTop: "20px" }}>
+        <h3>🚨 Flags</h3>
+        <p>Flag1: {data.latest.flags?.flag1}</p>
+        <p>Flag2: {data.latest.flags?.flag2}</p>
+        <p>Flag3: {data.latest.flags?.flag3}</p>
+      </div>
+
+      {/* Yield Chart */}
+      <div style={{ marginTop: "30px" }}>
+        <h3>📊 Yield Distribution</h3>
+        <PieChart width={400} height={300}>
+          <Pie data={yieldData} cx={200} cy={150} outerRadius={100} dataKey="value">
+            {yieldData.map((entry, index) => (
+              <Cell key={index} fill={COLORS[index]} />
+            ))}
+          </Pie>
+          <Tooltip />
+          <Legend />
+        </PieChart>
+      </div>
+
+      {/* Trend Chart */}
+      <div style={{ marginTop: "40px" }}>
+        <h3>📈 HGI Trend</h3>
+        <LineChart width={800} height={300} data={data.trend}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="time" />
+          <YAxis />
+          <Tooltip />
+          <Line type="monotone" dataKey="hgi" stroke="#ff7300" />
+        </LineChart>
+      </div>
+
+    </div>
+  );
+}
+
+const card = {
+  padding: "20px",
+  borderRadius: "12px",
+  background: "#ffffff",
+  width: "220px",
+  textAlign: "center",
+  boxShadow: "0 4px 10px rgba(0,0,0,0.1)"
+};
+
+export default App;

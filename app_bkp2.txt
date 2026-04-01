@@ -1,0 +1,282 @@
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import {
+  PieChart, Pie, Cell, Legend,
+  LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid
+} from "recharts";
+
+function App() {
+  const [data, setData] = useState(null);
+
+  const fetchData = async () => {
+    try {
+      const res = await axios.get("http://localhost:8000/run-model");
+      setData(res.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+    const interval = setInterval(fetchData, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
+  if (!data || !data.latest) return <h2>Loading...</h2>;
+
+  const yieldData = [
+    { name: "Heavy", value: data.latest.yields?.heavy || 0 },
+    { name: "Medium", value: data.latest.yields?.medium || 0 },
+    { name: "Light", value: data.latest.yields?.light || 0 }
+  ];
+
+  const COLORS = ["#ff4d4d", "#38bdf8", "#22c55e"];
+
+  const getColor = () => {
+    if (data.latest.prediction > data.latest.upper) return "red";
+    if (data.latest.prediction < data.latest.lower) return "orange";
+    return "green";
+  };
+
+  const getAlarmText = () => {
+    if (data.latest.prediction > data.latest.upper)
+      return "🔴 HIGH RISK - OUT OF RANGE";
+    if (data.latest.prediction < data.latest.lower)
+      return "🟠 LOW SIDE DEVIATION";
+    return "🟢 NORMAL OPERATION";
+  };
+
+  return (
+    <div style={{ display: "flex", height: "100vh", fontFamily: "Arial" }}>
+
+      {/* SIDEBAR */}
+      <div style={sidebar}>
+        <p style={{ color: "#38bdf8" }}>DCU</p>
+        <p>Monitoring</p>
+        <p>Configurations</p>
+      </div>
+
+      {/* MAIN */}
+      <div style={{ flex: 1, background: "#f1f5f9" }}>
+
+        {/* TOPBAR */}
+        <div style={topbar}>
+          <h3>DELAYED COKER UNIT</h3>
+          <p>{data.latest.timestamp}</p>
+        </div>
+
+        {/* CONTENT */}
+        <div style={{ padding: "20px" }}>
+
+<div style={{ display: "flex", gap: "20px" }}>
+
+  {/* LEFT SIDE - PERFORMANCE KPI */}
+  <div style={{ flex: 1 }}>
+    <Section title="Performance KPIs">
+
+      <div style={grid2}>
+        <Card title="HGI Prediction" value={data.latest.prediction} color={getColor()} />
+        <Card title="Target Range" value={`${data.latest.lower} - ${data.latest.upper}`} />
+        <Card title="Target Range" value={`${data.latest.lower} - ${data.latest.upper}`} />
+      </div>
+
+      <div style={grid2}>
+        <Card title="Online Hours" value={data.latest.houronline ?? "N/A"} />
+        <Card title="Furnace Charge" value={data.latest.furnacecharge ?? "N/A"} />
+        <Card title="Furnace Charge" value={data.latest.furnacecharge ?? "N/A"} />
+      </div>
+
+    </Section>
+    
+    
+  </div>
+
+  {/* Mid SIDE - PREDICTED KPI */}
+  <div style={{ flex: 1 }}>
+    <Section title="Predicted KPIs">
+
+      <div style={grid2}>
+        <Card title="Drum 1" value={data.latest.drum_status?.drum1} />
+        <Card title="Drum 2" value={data.latest.drum_status?.drum2} />
+        <Card title="Drum 2" value={data.latest.drum_status?.drum2} />
+      </div>
+
+      <div style={grid2}>
+        <Card title="Flag1" value={data.latest.flags?.flag1} />
+        <Card title="Flag2" value={data.latest.flags?.flag2} />
+        <Card title="Flag2" value={data.latest.flags?.flag2} />
+      </div>
+
+    </Section>
+  </div>
+  
+    {/* RIGHT SIDE - PREDICTED KPI */}
+    <div style={{ flex: 1 }}>
+      <Section title="Key Parameters">
+
+        <div style={grid2}>
+          <Card title="Drum 1" value={data.latest.drum_status?.drum1} />
+          <Card title="Drum 2" value={data.latest.drum_status?.drum2} />
+          <Card title="Drum 2" value={data.latest.drum_status?.drum2} />
+        </div>
+
+        <div style={grid2}>
+          <Card title="Flag1" value={data.latest.flags?.flag1} />
+          <Card title="Flag2" value={data.latest.flags?.flag2} />
+          <Card title="Flag2" value={data.latest.flags?.flag2} />
+        </div>
+
+      </Section>
+    </div>
+
+</div>
+
+
+
+
+          {/* YIELD + TREND */}
+          <div style={{ display: "flex", gap: "20px" }}>
+
+            {/* PIE */}
+            <Section title="Yield Distribution">
+              <PieChart width={350} height={300}>
+                <Pie data={yieldData} cx={175} cy={150} outerRadius={100} dataKey="value">
+                  {yieldData.map((entry, index) => (
+                    <Cell key={index} fill={COLORS[index]} />
+                  ))}
+                </Pie>
+                <Tooltip />
+                <Legend />
+              </PieChart>
+            </Section>
+
+            {/* TREND */}
+            <Section title="HGI Trend">
+              <LineChart width={600} height={300} data={data.trend}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="time" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+
+                <Line type="monotone" dataKey="hgi" stroke="#0ea5e9" strokeWidth={3} />
+                <Line type="monotone" dataKey="upper" stroke="red" strokeDasharray="5 5" />
+                <Line type="monotone" dataKey="lower" stroke="orange" strokeDasharray="5 5" />
+              </LineChart>
+            </Section>
+
+          </div>
+
+          {/* ACTION TABLE */}
+          <Section title="Actionables / Recommendations">
+            <table style={table}>
+              <thead>
+                <tr>
+                  <th>KPI</th>
+                  <th>Status</th>
+                  <th>Suggestion</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>HGI</td>
+                  <td>{getAlarmText()}</td>
+                  <td>
+                    {data.latest.prediction > data.latest.upper &&
+                      "Reduce furnace COT / adjust severity"}
+                    {data.latest.prediction < data.latest.lower &&
+                      "Increase severity / optimize drum switching"}
+                    {data.latest.prediction >= data.latest.lower &&
+                      data.latest.prediction <= data.latest.upper &&
+                      "Operating within limits"}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </Section>
+
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ---------------- STYLES ---------------- */
+
+const sidebar = {
+  width: "220px",
+  background: "#1e293b",
+  color: "white",
+  padding: "20px"
+};
+
+const topbar = {
+  height: "60px",
+  background: "white",
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  padding: "0 20px",
+  borderBottom: "1px solid #ddd"
+};
+
+const grid2 = {
+  display: "grid",
+  gridTemplateColumns: "repeat(2, 1fr)",
+  gap: "15px",
+  marginBottom: "15px"
+};
+
+const grid4 = {
+  display: "grid",
+  gridTemplateColumns: "repeat(4, 1fr)",
+  gap: "15px",
+  marginBottom: "20px"
+};
+
+const table = {
+  width: "100%",
+  borderCollapse: "collapse"
+};
+
+/* ---------------- COMPONENTS ---------------- */
+
+const Card = ({ title, value, color }) => (
+  <div style={{
+    background: "white",
+    padding: "15px",
+    borderRadius: "10px",
+    boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
+    textAlign: "center"
+  }}>
+    <h4>{title}</h4>
+    <h2 style={{ color: color || "black" }}>{value}</h2>
+  </div>
+);
+
+const SmallCard = ({ title, value }) => (
+  <div style={{
+    background: "#e2e8f0",
+    padding: "10px",
+    borderRadius: "8px",
+    textAlign: "center"
+  }}>
+    <p>{title}</p>
+    <b>{value}</b>
+  </div>
+);
+
+const Section = ({ title, children }) => (
+  <div style={{
+    background: "white",
+    padding: "15px",
+    borderRadius: "10px",
+    marginBottom: "20px"
+  }}>
+    <h3>{title}</h3>
+    {children}
+  </div>
+);
+
+export default App;
