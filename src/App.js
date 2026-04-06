@@ -348,7 +348,10 @@ export default function App() {
 
   const fetchData = async () => {
     try {
-      const res = await axios.get("http://localhost:8000/run-model");
+      const res = await axios.get("https://dcu-backend-r1.onrender.com/run-model");
+      /*const res = await axios.get(`${import.meta.env.VITE_API_URL}/run-model`);*/
+      
+      
       setData(res.data);
     } catch (err) {
       console.error(err);
