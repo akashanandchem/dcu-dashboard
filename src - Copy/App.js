@@ -29,7 +29,7 @@ const C = {
 };
 
 const font = "'DM Sans', 'Segoe UI', sans-serif";
-const API  = "https://dcu-backend-r1.onrender.com";
+const API  = "http://localhost:8000";
 
 const TREND_COLORS = [
   "#00b4d8","#16c784","#f59e0b","#ef4444",
@@ -87,7 +87,7 @@ const ALL_PARAMS=[
   {key:"residapi",label:"Recycle Ratio",unit:"",category:"Key Parameters"},
   {key:"cokedrum_qw_cum_mgal",label:"Quench Water Consumption",unit:"Mgal",category:"Key Parameters"},
   {key:"cokedrum_qw_duration",label:"Quench Water Consumption Duration",unit:"Hr",category:"Key Parameters"},
-  {key:"cokedrum_cokeheight",label:"Coke Height",unit:"ft",category:"Key Parameters"},
+  {key:"cokedrum_cokedrum_cokeheight",label:"Coke Height",unit:"ft",category:"Key Parameters"},
   {key:"cokedrum_outage_predicted",label:"Outage",unit:"ft",category:"Key Parameters"},
   {key:"cokedrum_hour1",label:"Hour1",unit:"Hr",category:"Key Parameters"},
   {key:"cokedrum_hour1_outage",label:"Forecasted Outage Hr1",unit:"ft",category:"Key Parameters"},
@@ -109,8 +109,6 @@ const KPI_TREND_CONFIG={
 const GlobalStyle=()=>(
   <style>{`
     @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap');
-    @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
-    .material-icons{font-style:normal;line-height:1;display:inline-flex;align-items:center;justify-content:center;vertical-align:middle;user-select:none;flex-shrink:0}
     *{box-sizing:border-box;margin:0;padding:0}
     html,body{font-family:'DM Sans','Segoe UI',sans-serif;background:#f0f5f9;color:#1c3045}
     ::-webkit-scrollbar{width:5px;height:5px}
@@ -191,10 +189,6 @@ const GlobalStyle=()=>(
     .hero-card{cursor:pointer;transition:background 0.15s}
     .hero-card:hover{background:#f0f9ff!important}
   `}</style>
-);
-
-const Icon=({name,size=16,color,style={}})=>(
-  <span className="material-icons" style={{fontSize:size,color:color||"inherit",...style}}>{name}</span>
 );
 
 function sortTrend(trend){
@@ -280,8 +274,8 @@ function applyZoomSlice(data,zoomRange){
 
 function SectionHeader({title,action}){
   return(
-    <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",paddingBottom:5,borderBottom:`1px solid ${C.border}`,marginBottom:6}}>
-      <div style={{fontSize:10,fontWeight:700,color:C.textDark,textTransform:"uppercase",letterSpacing:"0.6px"}}>{title}</div>
+    <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",paddingBottom:8,borderBottom:`1px solid ${C.border}`,marginBottom:10}}>
+      <div style={{fontSize:11,fontWeight:700,color:C.textDark,textTransform:"uppercase",letterSpacing:"0.6px"}}>{title}</div>
       {action&&<div style={{fontSize:10,color:C.accent,fontWeight:600,cursor:"pointer"}}>{action}</div>}
     </div>
   );
@@ -295,7 +289,7 @@ function ZoomBar({isZoomed,zoomPct,resetZoom,label}){
   return(
     <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:4}}>
       <div style={{fontSize:9,color:C.muted,display:"flex",gap:6,alignItems:"center"}}>
-        <span style={{color:C.textLight,display:"flex",alignItems:"center",gap:2}}><Icon name="mouse" size={11}/>Scroll</span><span style={{color:C.border}}>·</span><span style={{color:C.textLight,display:"flex",alignItems:"center",gap:2}}><Icon name="touch_app" size={11}/>Pinch to zoom</span>
+        <span style={{color:C.textLight}}>🖱 Scroll</span><span style={{color:C.border}}>·</span><span style={{color:C.textLight}}>👆 Pinch to zoom</span>
         {isZoomed&&<><span style={{color:C.border}}>·</span><span style={{color:C.orange,fontWeight:700,fontSize:9}}>{zoomPct}% view</span></>}
         {label&&<><span style={{color:C.border}}>·</span><span style={{color:C.textLight}}>{label}</span></>}
       </div>
@@ -305,11 +299,11 @@ function ZoomBar({isZoomed,zoomPct,resetZoom,label}){
 }
 
 const WIZARD_STEPS = [
-  { id:1, label:"Asset Info",          icon:"factory",     short:"Asset Info"         },
-  { id:2, label:"Algorithm Info",      icon:"settings",    short:"Algorithm Info"     },
-  { id:3, label:"Basic Configuration", icon:"build",       short:"Basic Configuration"},
-  { id:4, label:"Data Input",          icon:"bar_chart",   short:"Data Input"         },
-  { id:5, label:"KPI Calculation",     icon:"trending_up", short:"KPI Calculation"    },
+  { id:1, label:"Asset Info",          icon:"🏭", short:"Asset Info"    },
+  { id:2, label:"Algorithm Info",      icon:"⚙️",  short:"Algorithm Info" },
+  { id:3, label:"Basic Configuration", icon:"🔧",  short:"Basic Configuration"   },
+  { id:4, label:"Data Input",          icon:"📊",  short:"Data Input"     },
+  { id:5, label:"KPI Calculation",     icon:"📈",  short:"KPI Calculation"      },
 ];
 
 function WizLabel({ children, required }) {
@@ -379,7 +373,7 @@ function WizToggle({ label, value, onChange, hint }) {
 
 function WizardProgressBar({ currentStep, completedSteps }) {
   return (
-    <div style={{ display:"flex", alignItems:"center", gap:0, padding:"10px 16px 0" }}>
+    <div style={{ display:"flex", alignItems:"center", gap:0, padding:"20px 24px 0" }}>
       {WIZARD_STEPS.map((step, idx) => {
         const isDone = completedSteps.includes(step.id);
         const isActive = currentStep === step.id;
@@ -387,13 +381,13 @@ function WizardProgressBar({ currentStep, completedSteps }) {
         return (
           <React.Fragment key={step.id}>
             <div style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:6, minWidth:0 }}>
-              <div style={{ width:36, height:36, borderRadius:"50%", background: isDone ? C.accent : isActive ? C.navyMid : C.muted, border:`2px solid ${isDone ? C.accent : isActive ? C.accent : C.border}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:14, transition:"all 0.3s", flexShrink:0, boxShadow: isActive ? `0 0 0 4px rgba(0,180,216,0.15)` : "none" }}>
-                {isDone ? <Icon name="check" size={16} color={C.white}/> : <Icon name={step.icon} size={16} color={isLocked?"rgba(255,255,255,0.95)":C.white}/>}
+              <div style={{ width:36, height:36, borderRadius:"50%", background: isDone ? C.accent : isActive ? C.navyMid : C.offWhite, border:`2px solid ${isDone ? C.accent : isActive ? C.accent : C.border}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:14, transition:"all 0.3s", flexShrink:0, boxShadow: isActive ? `0 0 0 4px rgba(0,180,216,0.15)` : "none" }}>
+                {isDone ? <span style={{ color:C.white, fontSize:13, fontWeight:700 }}>✓</span> : <span style={{ filter: isLocked ? "grayscale(1) opacity(0.4)" : "none" }}>{step.icon}</span>}
               </div>
               <div style={{ textAlign:"center" }}>
-                <div style={{ fontSize:12, fontWeight:700, color: isActive ? C.offWhite : isDone ? C.offWhite : C.muted, textTransform:"uppercase", letterSpacing:"0.5px", whiteSpace:"nowrap" }}>{step.short}</div>
+                <div style={{ fontSize:12, fontWeight:700, color: isActive ? C.accent : isDone ? C.textDark : C.muted, textTransform:"uppercase", letterSpacing:"0.5px", whiteSpace:"nowrap" }}>{step.short}</div>
                 {isDone   && <div style={{ fontSize:10, color:C.green,  fontWeight:600 }}>Done</div>}
-                {isActive && <div style={{ fontSize:10, color:C.yellow, fontWeight:600 }}>Active</div>}
+                {isActive && <div style={{ fontSize:10, color:C.accent, fontWeight:600 }}>Active</div>}
                 {isLocked && <div style={{ fontSize:10, color:C.muted  }}>Locked</div>}
               </div>
             </div>
@@ -424,38 +418,34 @@ function WizSubmitBtn({ onClick, label="Submit & Continue" }) {
    Renders "Use Defaults" button in top-right of header
 ───────────────────────────────────────── */
 function WizStepCard({ stepNum, title, icon, subtitle, children, isComplete, onUseDefaults }) {
-  const [collapsed, setCollapsed] = useState(isComplete);
-  useEffect(() => { if (isComplete) setCollapsed(true); }, [isComplete]);
   return (
-    <div className="wizard-step" style={{ background:C.white, borderRadius:10, border:`1.5px solid ${isComplete ? C.accent+"55" : C.border}`, overflow:"hidden", boxShadow:"0 2px 8px rgba(0,0,0,0.05)" }}>
-      <div onClick={()=>isComplete&&setCollapsed(c=>!c)}
-        style={{ background: isComplete ? `linear-gradient(90deg, rgba(0,180,216,0.08), transparent)` : `linear-gradient(90deg, rgba(13,32,64,0.04), transparent)`, padding:"9px 14px", borderBottom: collapsed ? "none" : `1px solid ${C.border}`, display:"flex", alignItems:"center", justifyContent:"space-between", cursor: isComplete ? "pointer" : "default" }}>
-        <div style={{ display:"flex", alignItems:"center", gap:10 }}>
-          <div style={{ width:32, height:32, borderRadius:8, background: isComplete ? C.accent : C.navyMid, display:"flex", alignItems:"center", justifyContent:"center", fontSize:15, flexShrink:0 }}>
-            {isComplete ? <Icon name="check" size={16} color={C.white}/> : <Icon name={icon} size={16} color={C.white}/>}
+    <div className="wizard-step" style={{ background:C.white, borderRadius:12, border:`1.5px solid ${isComplete ? C.accent+"55" : C.border}`, overflow:"hidden", boxShadow:"0 2px 12px rgba(0,0,0,0.06)" }}>
+      <div style={{ background: isComplete ? `linear-gradient(90deg, rgba(0,180,216,0.08), transparent)` : `linear-gradient(90deg, rgba(13,32,64,0.04), transparent)`, padding:"14px 20px", borderBottom:`1px solid ${C.border}`, display:"flex", alignItems:"center", justifyContent:"space-between" }}>
+        <div style={{ display:"flex", alignItems:"center", gap:12 }}>
+          <div style={{ width:40, height:40, borderRadius:10, background: isComplete ? C.accent : C.navyMid, display:"flex", alignItems:"center", justifyContent:"center", fontSize:18, flexShrink:0 }}>
+            {isComplete ? <span style={{ color:C.white, fontSize:16, fontWeight:800 }}>✓</span> : icon}
           </div>
           <div>
-            <div style={{ display:"flex", alignItems:"center", gap:6 }}>
+            <div style={{ display:"flex", alignItems:"center", gap:8 }}>
               <span style={{ fontSize:9, fontWeight:700, color:C.muted, textTransform:"uppercase", letterSpacing:"0.8px" }}>Step {stepNum}</span>
-              {isComplete && <span style={{ background:"#d1fae5", color:"#065f46", borderRadius:20, padding:"1px 7px", fontSize:9, fontWeight:700 }}>COMPLETED</span>}
+              {isComplete && <span style={{ background:"#d1fae5", color:"#065f46", borderRadius:20, padding:"1px 8px", fontSize:9, fontWeight:700 }}>COMPLETED</span>}
             </div>
-            <div style={{ fontSize:12, fontWeight:700, color:C.textDark }}>{title}</div>
-            {subtitle && !collapsed && <div style={{ fontSize:9, color:C.muted, marginTop:1 }}>{subtitle}</div>}
+            <div style={{ fontSize:14, fontWeight:700, color:C.textDark }}>{title}</div>
+            {subtitle && <div style={{ fontSize:10, color:C.muted, marginTop:1 }}>{subtitle}</div>}
           </div>
         </div>
-        <div style={{ display:"flex", alignItems:"center", gap:8 }}>
-          {!isComplete && onUseDefaults && (
-            <button onClick={e=>{e.stopPropagation();onUseDefaults();}}
-              style={{ display:"flex", alignItems:"center", gap:5, padding:"5px 11px", borderRadius:6, border:`1.5px solid ${C.teal}`, background:"rgba(0,180,216,0.07)", color:C.teal, fontSize:10, fontWeight:700, cursor:"pointer", fontFamily:font, transition:"all 0.15s", whiteSpace:"nowrap" }}
-              onMouseEnter={e=>{ e.currentTarget.style.background="rgba(0,180,216,0.15)"; e.currentTarget.style.borderColor=C.accent; e.currentTarget.style.color=C.accent; }}
-              onMouseLeave={e=>{ e.currentTarget.style.background="rgba(0,180,216,0.07)"; e.currentTarget.style.borderColor=C.teal; e.currentTarget.style.color=C.teal; }}>
-              <Icon name="bolt" size={13}/> Use Defaults
-            </button>
-          )}
-          {isComplete && <Icon name={collapsed?"expand_more":"expand_less"} size={18} color={C.muted}/>}
-        </div>
+        {/* ── Use Defaults button — only shown when step is not yet complete and onUseDefaults is provided ── */}
+        {!isComplete && onUseDefaults && (
+          <button
+            onClick={onUseDefaults}
+            style={{ display:"flex", alignItems:"center", gap:6, padding:"7px 14px", borderRadius:7, border:`1.5px solid ${C.teal}`, background:"rgba(0,180,216,0.07)", color:C.teal, fontSize:11, fontWeight:700, cursor:"pointer", fontFamily:font, transition:"all 0.15s", whiteSpace:"nowrap", flexShrink:0 }}
+            onMouseEnter={e=>{ e.currentTarget.style.background="rgba(0,180,216,0.15)"; e.currentTarget.style.borderColor=C.accent; e.currentTarget.style.color=C.accent; }}
+            onMouseLeave={e=>{ e.currentTarget.style.background="rgba(0,180,216,0.07)"; e.currentTarget.style.borderColor=C.teal; e.currentTarget.style.color=C.teal; }}>
+            ⚡ Use Defaults
+          </button>
+        )}
       </div>
-      {!collapsed && <div style={{ padding:"14px" }}>{children}</div>}
+      <div style={{ padding:"20px" }}>{children}</div>
     </div>
   );
 }
@@ -501,7 +491,7 @@ function Step1AssetInfo({ data, onChange, onSubmit, isComplete }) {
     </div>
   );
   return (
-    <WizStepCard stepNum={1} title="Asset Info" icon="factory" subtitle="Define your fired heater and coke drum physical configuration" isComplete={isComplete} onUseDefaults={()=>{ onChange(DEFAULT_ASSET); setErrors({}); }}>
+    <WizStepCard stepNum={1} title="Asset Info" icon="🏭" subtitle="Define your fired heater and coke drum physical configuration" isComplete={isComplete} onUseDefaults={()=>{ onChange(DEFAULT_ASSET); setErrors({}); }}>
       <div style={{ marginBottom:20 }}>
         <SectionLabel num="1" label="Fired Heater Info" color={C.accent} />
         <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(180px,1fr))", gap:12 }}>
@@ -516,7 +506,7 @@ function Step1AssetInfo({ data, onChange, onSubmit, isComplete }) {
         </div>
       </div>
       <div>
-        <SectionLabel num="2" label="Coke Drum Info" color={C.accent} />
+        <SectionLabel num="2" label="Coke Drum Info" color={C.orange} />
         <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(180px,1fr))", gap:12 }}>
           <WizInput label="No. of Coke Drums" value={data.coke_drums} required type="number" min={1}
             onChange={v=>{onChange({...data,coke_drums:v});if(errors.coke_drums)setErrors(e=>({...e,coke_drums:null}));}}
@@ -539,7 +529,7 @@ function Step1AssetInfo({ data, onChange, onSubmit, isComplete }) {
       {!isComplete && <WizSubmitBtn onClick={()=>{if(validate())onSubmit();}} label="Submit Asset Info & Continue" />}
       {isComplete && (
         <div style={{ marginTop:16, padding:"12px 16px", background:"rgba(22,199,132,0.08)", borderRadius:8, border:"1px solid rgba(22,199,132,0.3)", display:"flex", alignItems:"center", gap:10 }}>
-          <Icon name="check_circle" size={16} color="#16c784"/>
+          <span style={{ fontSize:16 }}>✅</span>
           <span style={{ fontSize:12, fontWeight:600, color:"#065f46" }}>
             Saved — {data.fired_heaters} heater(s) · {data.coke_drums} drum(s) · {data.drum_height}m × ⌀{data.drum_diameter}m · {data.burner_orientation}
           </span>
@@ -605,7 +595,7 @@ function Step2AlgorithmInfo({ data, onChange, onSubmit, isComplete }) {
     </div>
   );
   return (
-    <WizStepCard stepNum={2} title="Algorithm Info" icon="settings" subtitle="Select models, KPI types and enable feature modules" isComplete={isComplete} onUseDefaults={()=>{ onChange(DEFAULT_ALGO); setErrors({}); }}>
+    <WizStepCard stepNum={2} title="Algorithm Info" icon="⚙️" subtitle="Select models, KPI types and enable feature modules" isComplete={isComplete} onUseDefaults={()=>{ onChange(DEFAULT_ALGO); setErrors({}); }}>
       <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:20, marginBottom:20 }}>
         <CheckGroup field="heater_models" options={HEATER_MODEL_OPTS} label="Fired Heater Models" err={errors.heater_models} accentColor={C.orange} />
         <CheckGroup field="drum_models"   options={DRUM_MODEL_OPTS}   label="Coke Drum Models"   err={errors.drum_models}   accentColor={C.teal} />
@@ -623,7 +613,7 @@ function Step2AlgorithmInfo({ data, onChange, onSubmit, isComplete }) {
       {!isComplete && <WizSubmitBtn onClick={()=>{if(validate())onSubmit();}} label="Submit Algorithm Info & Continue" />}
       {isComplete && (
         <div style={{ marginTop:16, padding:"12px 16px", background:"rgba(22,199,132,0.08)", borderRadius:8, border:"1px solid rgba(22,199,132,0.3)", display:"flex", alignItems:"center", gap:10, flexWrap:"wrap" }}>
-          <Icon name="check_circle" size={16} color="#16c784"/>
+          <span style={{ fontSize:16 }}>✅</span>
           <span style={{ fontSize:12, fontWeight:600, color:"#065f46" }}>Saved —</span>
           {[...(data.heater_models||[]),...(data.drum_models||[]),...(data.kpi_types||[])].map(m=>(
             <span key={m} style={{ background:C.accent+"22", color:C.accentDim, borderRadius:20, padding:"1px 9px", fontSize:10, fontWeight:600 }}>{m}</span>
@@ -680,7 +670,7 @@ function Step3BasicConfig({ data, onChange, onSubmit, isComplete }) {
     { key:"model_init_period", label:"Model Initialization Period",   options:["1 hr","2 hr"],            required:true },
   ];
   return (
-    <WizStepCard stepNum={3} title="Basic Configuration" icon="build" subtitle="Set time intervals and refresh frequencies for your unit" isComplete={isComplete} onUseDefaults={()=>{ onChange(DEFAULT_BASIC_CONFIG); setErrors({}); }}>
+    <WizStepCard stepNum={3} title="Basic Configuration" icon="🔧" subtitle="Set time intervals and refresh frequencies for your unit" isComplete={isComplete} onUseDefaults={()=>{ onChange(DEFAULT_BASIC_CONFIG); setErrors({}); }}>
       <div style={{ display:"flex", flexDirection:"column", gap:20 }}>
         {fields.map(f => (
           <RadioGroup key={f.key} field={f.key} label={f.label} options={f.options} required={f.required} />
@@ -689,7 +679,7 @@ function Step3BasicConfig({ data, onChange, onSubmit, isComplete }) {
       {!isComplete && <WizSubmitBtn onClick={()=>{ if(validate()) onSubmit(); }} label="Submit Basic Config & Continue" />}
       {isComplete && (
         <div style={{ marginTop:16, padding:"12px 16px", background:"rgba(22,199,132,0.08)", borderRadius:8, border:"1px solid rgba(22,199,132,0.3)", display:"flex", alignItems:"center", gap:10, flexWrap:"wrap" }}>
-          <Icon name="check_circle" size={16} color="#16c784"/>
+          <span style={{ fontSize:16 }}>✅</span>
           <span style={{ fontSize:12, fontWeight:600, color:"#065f46" }}>Saved —</span>
           {fields.map(f => data[f.key] && (
             <span key={f.key} style={{ background:C.accent+"22", color:C.accentDim, borderRadius:20, padding:"1px 9px", fontSize:10, fontWeight:600 }}>
@@ -757,7 +747,7 @@ function Step4DataInput({ data, onChange, onSubmit, isComplete }) {
   const mapped   = SAMPLE_TAG_LIST.filter(t => data[t.id]?.trim());
   const unmapped = SAMPLE_TAG_LIST.filter(t => !data[t.id]?.trim());
   return (
-    <WizStepCard stepNum={4} title="Data Input" icon="bar_chart" subtitle="Map PI tags to each required process input" isComplete={isComplete} onUseDefaults={()=>onChange(DEFAULT_DATA_INPUT)}>
+    <WizStepCard stepNum={4} title="Data Input" icon="📊" subtitle="Map PI tags to each required process input" isComplete={isComplete} onUseDefaults={()=>onChange(DEFAULT_DATA_INPUT)}>
       <div style={{ display:"flex", gap:10, marginBottom:16, flexWrap:"wrap" }}>
         <div style={{ display:"flex", alignItems:"center", gap:8, padding:"8px 14px", borderRadius:8, background:"rgba(22,199,132,0.08)", border:"1px solid rgba(22,199,132,0.25)" }}>
           <div style={{ width:8, height:8, borderRadius:"50%", background:C.green }}/>
@@ -820,7 +810,7 @@ function Step4DataInput({ data, onChange, onSubmit, isComplete }) {
       {!isComplete && <WizSubmitBtn onClick={()=>onSubmit()} label="Submit Data Input & Continue" />}
       {isComplete && (
         <div style={{ marginTop:16, padding:"12px 16px", background:"rgba(22,199,132,0.08)", borderRadius:8, border:"1px solid rgba(22,199,132,0.3)", display:"flex", alignItems:"center", gap:10 }}>
-          <Icon name="check_circle" size={16} color="#16c784"/>
+          <span style={{ fontSize:16 }}>✅</span>
           <span style={{ fontSize:12, fontWeight:600, color:"#065f46" }}>Data Input saved — {mapped.length} of {SAMPLE_TAG_LIST.length} tags mapped</span>
         </div>
       )}
@@ -832,11 +822,11 @@ function PlaceholderStep({ stepNum, title, icon, subtitle, description, onSubmit
   return (
     <WizStepCard stepNum={stepNum} title={title} icon={icon} subtitle={subtitle} isComplete={isComplete} onUseDefaults={!isComplete ? ()=>onSubmit() : undefined}>
       <div style={{ padding:"32px 20px", textAlign:"center", background:C.offWhite, borderRadius:10, border:`1.5px dashed ${C.border}` }}>
-        <div style={{ marginBottom:12, opacity:0.5 }}><Icon name={icon} size={36} color={C.muted}/></div>
+        <div style={{ fontSize:36, marginBottom:12, opacity:0.5 }}>{icon}</div>
         <div style={{ fontSize:14, fontWeight:700, color:C.textDark, marginBottom:6 }}>{title}</div>
         <div style={{ fontSize:12, color:C.muted, maxWidth:400, margin:"0 auto 20px" }}>{description}</div>
         <div style={{ display:"inline-flex", alignItems:"center", gap:6, background:"rgba(245,158,11,0.1)", border:"1px solid rgba(245,158,11,0.3)", borderRadius:20, padding:"4px 14px", fontSize:11, color:C.orange, fontWeight:600 }}>
-          <Icon name="construction" size={13}/> Coming Soon — Placeholder
+          🚧 Coming Soon — Placeholder
         </div>
       </div>
       {!isComplete && (
@@ -844,13 +834,13 @@ function PlaceholderStep({ stepNum, title, icon, subtitle, description, onSubmit
       )}
       {isComplete && !isLast && (
         <div style={{ marginTop:16, padding:"12px 16px", background:"rgba(22,199,132,0.08)", borderRadius:8, border:"1px solid rgba(22,199,132,0.3)", display:"flex", alignItems:"center", gap:10 }}>
-          <Icon name="check_circle" size={16} color="#16c784"/>
+          <span style={{ fontSize:16 }}>✅</span>
           <span style={{ fontSize:12, fontWeight:600, color:"#065f46" }}>{title} step completed</span>
         </div>
       )}
       {isComplete && isLast && (
         <div style={{ marginTop:16, padding:"16px 20px", background:"linear-gradient(135deg, rgba(22,199,132,0.1), rgba(0,180,216,0.08))", borderRadius:10, border:"1.5px solid rgba(22,199,132,0.4)", display:"flex", alignItems:"center", gap:14 }}>
-          <Icon name="celebration" size={28} color="#16c784"/>
+          <div style={{ fontSize:28 }}>🎉</div>
           <div>
             <div style={{ fontSize:14, fontWeight:700, color:"#065f46" }}>All 5 steps completed!</div>
             <div style={{ fontSize:11, color:C.textMid, marginTop:2 }}>Your DCU unit is fully configured. Use "Save All Config" to persist your settings.</div>
@@ -864,11 +854,11 @@ function PlaceholderStep({ stepNum, title, icon, subtitle, description, onSubmit
 function LockedStep({ stepNum, label, icon, unlocksAfter }) {
   return (
     <div style={{ background:C.white, borderRadius:12, border:`1.5px solid ${C.border}`, padding:"16px 20px", display:"flex", alignItems:"center", gap:14, opacity:0.5 }}>
-      <div style={{ width:40, height:40, borderRadius:10, background:C.offWhite, border:`1.5px solid ${C.border}`, display:"flex", alignItems:"center", justifyContent:"center" }}><Icon name={icon} size={20} color={C.muted}/></div>
+      <div style={{ width:40, height:40, borderRadius:10, background:C.offWhite, border:`1.5px solid ${C.border}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:18, filter:"grayscale(1)" }}>{icon}</div>
       <div>
         <div style={{ display:"flex", alignItems:"center", gap:8 }}>
           <span style={{ fontSize:9, fontWeight:700, color:C.muted, textTransform:"uppercase" }}>Step {stepNum}</span>
-          <span style={{ background:C.offWhite, color:C.muted, borderRadius:20, padding:"1px 8px", fontSize:9, fontWeight:700, border:`1px solid ${C.border}`, display:"inline-flex", alignItems:"center", gap:3 }}><Icon name="lock" size={10}/>LOCKED</span>
+          <span style={{ background:C.offWhite, color:C.muted, borderRadius:20, padding:"1px 8px", fontSize:9, fontWeight:700, border:`1px solid ${C.border}` }}>🔒 LOCKED</span>
         </div>
         <div style={{ fontSize:13, fontWeight:600, color:C.muted }}>{label}</div>
         <div style={{ fontSize:10, color:C.muted, marginTop:2 }}>Complete <strong>{unlocksAfter}</strong> to unlock</div>
@@ -908,54 +898,54 @@ function DeveloperInfoPage() {
 
   return (
     <div style={{ flex:1, overflowY:"auto", display:"flex", flexDirection:"column", fontFamily:font, background:"#FFFFF0" }}>
-      <div style={{ background:`linear-gradient(135deg,#003d6b 0%,#005580 0%)`, flexShrink:0 }}>
-        <div style={{ padding:"10px 16px 0", display:"flex", alignItems:"center", justifyContent:"space-between" }}>
+      <div style={{ background:`linear-gradient(135deg,#003d6b 0%,#005580 100%)`, flexShrink:0 }}>
+        <div style={{ padding:"20px 24px 0", display:"flex", alignItems:"flex-start", justifyContent:"space-between" }}>
           <div>
-            <div style={{ fontSize:13, fontWeight:700, color:C.white, display:"flex", alignItems:"center", gap:8 }}>
-              <Icon name="handyman" size={16} color={C.white}/> Developer Info — Unit Setup Wizard
+            <div style={{ fontSize:16, fontWeight:700, color:C.white, display:"flex", alignItems:"center", gap:10 }}>
+              🛠️ Developer Info — Unit Setup Wizard
             </div>
-            <div style={{ fontSize:10, color:"rgba(255,255,255,0.5)", marginTop:2 }}>
+            <div style={{ fontSize:11, color:"rgba(255,255,255,0.5)", marginTop:3 }}>
               Complete all 5 steps sequentially · Each step unlocks the next
             </div>
           </div>
-          <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+          <div style={{ display:"flex", alignItems:"center", gap:10 }}>
             {allDone && (
               <button onClick={handleSaveAll}
-                style={{ padding:"6px 14px", borderRadius:7, border:"none", background: saved ? C.green : C.accent, color:C.white, fontSize:11, fontWeight:700, cursor:"pointer", fontFamily:font, transition:"background 0.2s", display:"flex", alignItems:"center", gap:5 }}>
-                {saved ? <><Icon name="check" size={13}/>Saved!</> : <><Icon name="save" size={13}/>Save All Config</>}
+                style={{ padding:"9px 20px", borderRadius:8, border:"none", background: saved ? C.green : C.accent, color:C.white, fontSize:12, fontWeight:700, cursor:"pointer", fontFamily:font, transition:"background 0.2s", display:"flex", alignItems:"center", gap:6 }}>
+                {saved ? "✓ Saved!" : "💾 Save All Config"}
               </button>
             )}
-            <div style={{ textAlign:"center", background:"rgba(255,255,255,0.07)", border:"1px solid rgba(255,255,255,0.12)", borderRadius:8, padding:"5px 12px" }}>
-              <div style={{ fontSize:9, color:"rgba(255,255,255,0.5)" }}>Progress</div>
-              <div style={{ fontSize:15, fontWeight:700, color: allDone ? C.green : C.accent }}>{completedSteps.length} / 5</div>
+            <div style={{ textAlign:"center", background:"rgba(255,255,255,0.07)", border:"1px solid rgba(255,255,255,0.12)", borderRadius:9, padding:"8px 16px" }}>
+              <div style={{ fontSize:10, color:"rgba(255,255,255,0.5)" }}>Progress</div>
+              <div style={{ fontSize:18, fontWeight:700, color: allDone ? C.green : C.accent }}>{completedSteps.length} / 5</div>
             </div>
           </div>
         </div>
         <WizardProgressBar currentStep={currentStep} completedSteps={completedSteps} />
       </div>
-      <div style={{ flex:1, padding:"10px 14px", display:"flex", flexDirection:"column", gap:8 }}>
+      <div style={{ flex:1, padding:"20px 24px", display:"flex", flexDirection:"column", gap:14 }}>
         <div id="wiz-step-1">
           <Step1AssetInfo data={assetData} onChange={setAssetData} onSubmit={()=>completeStep(1)} isComplete={completedSteps.includes(1)} />
         </div>
         <div id="wiz-step-2">
           {completedSteps.includes(1)
             ? <Step2AlgorithmInfo data={algoData} onChange={setAlgoData} onSubmit={()=>completeStep(2)} isComplete={completedSteps.includes(2)} />
-            : <LockedStep stepNum={2} label="Algorithm Info" icon="settings" unlocksAfter="Asset Info" />}
+            : <LockedStep stepNum={2} label="Algorithm Info" icon="⚙️" unlocksAfter="Asset Info" />}
         </div>
         <div id="wiz-step-3">
           {completedSteps.includes(2)
             ? <Step3BasicConfig data={basicData} onChange={setBasicData} onSubmit={()=>completeStep(3)} isComplete={completedSteps.includes(3)} />
-            : <LockedStep stepNum={3} label="Basic Configuration" icon="build" unlocksAfter="Algorithm Info" />}
+            : <LockedStep stepNum={3} label="Basic Configuration" icon="🔧" unlocksAfter="Algorithm Info" />}
         </div>
         <div id="wiz-step-4">
           {completedSteps.includes(3)
             ? <Step4DataInput data={dataInput} onChange={setDataInput} onSubmit={()=>completeStep(4)} isComplete={completedSteps.includes(4)} />
-            : <LockedStep stepNum={4} label="Data Input" icon="bar_chart" unlocksAfter="Basic Configuration" />}
+            : <LockedStep stepNum={4} label="Data Input" icon="📊" unlocksAfter="Basic Configuration" />}
         </div>
         <div id="wiz-step-5">
           {completedSteps.includes(4)
-            ? <PlaceholderStep stepNum={5} title="KPI Calculation" icon="trending_up" subtitle="Define KPI targets, benchmarks and calculation rules" description="Set calculation methodologies for furnace efficiency, energy intensity, fouling indices, and operational targets. Full configuration to be provided." onSubmit={()=>completeStep(5)} isComplete={completedSteps.includes(5)} isLast />
-            : <LockedStep stepNum={5} label="KPI Calculation" icon="trending_up" unlocksAfter="Data Input" />}
+            ? <PlaceholderStep stepNum={5} title="KPI Calculation" icon="📈" subtitle="Define KPI targets, benchmarks and calculation rules" description="Set calculation methodologies for furnace efficiency, energy intensity, fouling indices, and operational targets. Full configuration to be provided." onSubmit={()=>completeStep(5)} isComplete={completedSteps.includes(5)} isLast />
+            : <LockedStep stepNum={5} label="KPI Calculation" icon="📈" unlocksAfter="Data Input" />}
         </div>
       </div>
     </div>
@@ -963,16 +953,16 @@ function DeveloperInfoPage() {
 }
 
 const CONFIG_FILES=[
-  {name:"config",          label:"Config",            icon:"settings",           desc:"General model configuration parameters"},
-  {name:"crudetags",       label:"Crude Tags",         icon:"label",              desc:"PI tag mappings for crude feed streams"},
-  {name:"desired_hgi",     label:"Desired HGI",        icon:"gps_fixed",          desc:"Target HGI setpoints and tolerance bands"},
-  {name:"dynamic_tag",     label:"Dynamic Tags",       icon:"refresh",            desc:"Dynamic tag definitions for live data"},
-  {name:"errorCode",       label:"Error Codes",        icon:"warning_amber",      desc:"Error / alarm code definitions"},
-  {name:"features",        label:"Features",           icon:"straighten",         desc:"Model feature definitions and scaling"},
-  {name:"formulaTags",     label:"Formula Tags",       icon:"calculate",          desc:"Calculated / formula tag definitions"},
-  {name:"graphics",        label:"Graphics",           icon:"image",              desc:"Dashboard graphic element mappings"},
-  {name:"lastHgi",         label:"Last HGI",           icon:"bar_chart",          desc:"Historical last HGI reference values"},
-  {name:"outputTagMapping",label:"Output Tag Mapping", icon:"link",               desc:"Model output to PI tag mappings"},
+  {name:"config",          label:"Config",            icon:"⚙️", desc:"General model configuration parameters"},
+  {name:"crudetags",       label:"Crude Tags",         icon:"🏷️", desc:"PI tag mappings for crude feed streams"},
+  {name:"desired_hgi",     label:"Desired HGI",        icon:"🎯", desc:"Target HGI setpoints and tolerance bands"},
+  {name:"dynamic_tag",     label:"Dynamic Tags",       icon:"🔄", desc:"Dynamic tag definitions for live data"},
+  {name:"errorCode",       label:"Error Codes",        icon:"⚠️", desc:"Error / alarm code definitions"},
+  {name:"features",        label:"Features",           icon:"📐", desc:"Model feature definitions and scaling"},
+  {name:"formulaTags",     label:"Formula Tags",       icon:"🧮", desc:"Calculated / formula tag definitions"},
+  {name:"graphics",        label:"Graphics",           icon:"🖼️", desc:"Dashboard graphic element mappings"},
+  {name:"lastHgi",         label:"Last HGI",           icon:"📊", desc:"Historical last HGI reference values"},
+  {name:"outputTagMapping",label:"Output Tag Mapping", icon:"🔗", desc:"Model output to PI tag mappings"},
 ];
 
 function CfgFileIcon({ext="csv"}){
@@ -1060,98 +1050,6 @@ function buildXYData(sorted, xKey, yKey, colorKey=""){
     .filter(r=>typeof r.x==="number"&&typeof r.y==="number"&&isFinite(r.x)&&isFinite(r.y));
 }
 
-function buildOutlierData(sorted, key){
-  const pts=sorted
-    .map((r,i)=>({time:r.time,value:r[key],idx:i}))
-    .filter(r=>typeof r.value==="number"&&isFinite(r.value));
-  if(pts.length<4) return{inliers:pts.map(r=>({...r,isOutlier:false})),outliers:[],q1:0,q3:0,iqr:0,lower:0,upper:0,outlierCount:0,total:pts.length};
-  const asc=[...pts].sort((a,b)=>a.value-b.value);
-  const n=asc.length;
-  const q1=asc[Math.floor(n*0.25)].value;
-  const q3=asc[Math.floor(n*0.75)].value;
-  const iqr=q3-q1;
-  const lower=q1-1.5*iqr;
-  const upper=q3+1.5*iqr;
-  const inliers=[],outliers=[];
-  pts.forEach(r=>{
-    if(r.value<lower||r.value>upper) outliers.push(r);
-    else inliers.push(r);
-  });
-  return{inliers,outliers,q1,q3,iqr,lower,upper,outlierCount:outliers.length,total:pts.length};
-}
-
-function gaussElim(A,b){
-  const n=b.length;const M=A.map((row,i)=>[...row,b[i]]);
-  for(let col=0;col<n;col++){
-    let mx=col;
-    for(let r=col+1;r<n;r++)if(Math.abs(M[r][col])>Math.abs(M[mx][col]))mx=r;
-    [M[col],M[mx]]=[M[mx],M[col]];
-    if(Math.abs(M[col][col])<1e-12)continue;
-    for(let r=col+1;r<n;r++){const f=M[r][col]/M[col][col];for(let k=col;k<=n;k++)M[r][k]-=f*M[col][k];}
-  }
-  const x=Array(n).fill(0);
-  for(let i=n-1;i>=0;i--){x[i]=M[i][n]/M[i][i];for(let j=i-1;j>=0;j--)M[j][n]-=M[j][i]*x[i];}
-  return x;
-}
-function polyFit(xs,ys,degree){
-  const d=degree+1;
-  const ATA=Array.from({length:d},()=>Array(d).fill(0));
-  const ATb=Array(d).fill(0);
-  xs.forEach((x,i)=>{
-    const row=Array.from({length:d},(_,j)=>Math.pow(x,j));
-    for(let j=0;j<d;j++){ATb[j]+=row[j]*ys[i];for(let k=0;k<d;k++)ATA[j][k]+=row[j]*row[k];}
-  });
-  return gaussElim(ATA,ATb);
-}
-function evalPoly(coeffs,x){return coeffs.reduce((s,c,i)=>s+c*Math.pow(x,i),0);}
-
-function buildForecastData(sorted,key,inputWindow,forecastHorizon,method){
-  const pts=sorted
-    .map(r=>({time:new Date(r.time).getTime(),value:r[key]}))
-    .filter(r=>typeof r.value==="number"&&isFinite(r.value));
-  if(pts.length<3)return{chartData:[],forecastStart:null,r2:null,avgDt:0};
-  const winSize=Math.min(inputWindow,pts.length);
-  const inputPts=pts.slice(-winSize);
-  const N=winSize-1||1;
-  const xs=inputPts.map((_,i)=>i/N);
-  const ys=inputPts.map(p=>p.value);
-  const avgDt=winSize>1?(inputPts[winSize-1].time-inputPts[0].time)/(winSize-1):60000;
-
-  let predictFn,r2=null;
-  if(method==="linear"||method==="poly2"||method==="poly3"){
-    const deg=method==="linear"?1:method==="poly2"?2:3;
-    const eDeg=Math.min(deg,winSize-1);
-    const coeffs=polyFit(xs,ys,eDeg);
-    predictFn=x=>evalPoly(coeffs,x);
-    const yMean=ys.reduce((s,v)=>s+v,0)/ys.length;
-    const ssTot=ys.reduce((s,v)=>s+(v-yMean)**2,0);
-    const ssRes=xs.reduce((s,x,i)=>s+(ys[i]-predictFn(x))**2,0);
-    r2=ssTot>1e-10?Math.max(0,1-ssRes/ssTot):1;
-  }else if(method==="movavg"){
-    const maN=Math.max(2,Math.min(5,Math.floor(winSize/3)));
-    const maXs=[],maYs=[];
-    for(let i=maN-1;i<ys.length;i++){maXs.push(xs[i]);maYs.push(ys.slice(i-maN+1,i+1).reduce((s,v)=>s+v,0)/maN);}
-    const mCoeffs=polyFit(maXs,maYs,1);
-    predictFn=x=>evalPoly(mCoeffs,x);
-  }else{
-    let s=ys[0],b=ys.length>1?(ys[ys.length-1]-ys[0])/(ys.length-1):0;
-    ys.forEach((v,i)=>{if(i>0){const ps=s;s=0.3*v+0.7*(s+b);b=0.1*(s-ps)+0.9*b;}});
-    const lastX=xs[xs.length-1];
-    predictFn=x=>s+b*(x-lastX)*(N);
-  }
-
-  const inputStartIdx=pts.length-winSize;
-  const chartData=pts.map(p=>({time:p.time,actual:p.value,forecast:null,fitted:null}));
-  inputPts.forEach((_,i)=>{chartData[inputStartIdx+i].fitted=+predictFn(i/N).toFixed(3);});
-  const lastIdx=pts.length-1;
-  chartData[lastIdx].forecast=chartData[lastIdx].fitted;
-  const lastTime=pts[lastIdx].time;
-  for(let f=1;f<=forecastHorizon;f++){
-    chartData.push({time:lastTime+avgDt*f,actual:null,forecast:+predictFn((winSize-1+f)/N).toFixed(3),fitted:null});
-  }
-  return{chartData,forecastStart:lastTime,r2:r2!==null?+r2.toFixed(4):null,avgDt};
-}
-
 function heatColor(t){
   const f=Math.max(0,Math.min(1,t));
   const stops=[[0,[59,130,246]],[0.33,[0,201,177]],[0.66,[245,158,11]],[1,[239,68,68]]];
@@ -1200,36 +1098,29 @@ function MonitoringPage({trend,latest}){
     const mn=Math.min(...vals),mx=Math.max(...vals);
     return{min:mn,max:mx===mn?mn+1:mx};
   },[xyData,colorKeyVal]);
-  const[forecastInputWindow,setForecastInputWindow]=useState(20);
-  const[forecastHorizon,setForecastHorizon]=useState(10);
-  const[forecastMethod,setForecastMethod]=useState("linear");
-  const chartTypeTabs=[{key:"trend",icon:"show_chart",label:"Trend"},{key:"histogram",icon:"bar_chart",label:"Histogram"},{key:"xy",icon:"scatter_plot",label:"X vs Y"},{key:"outlier",icon:"bubble_chart",label:"Outlier"},{key:"forecast",icon:"auto_graph",label:"Custom Forecast"}];
+  const chartTypeTabs=[{key:"trend",icon:"📈",label:"Trend"},{key:"histogram",icon:"📊",label:"Histogram"},{key:"xy",icon:"🔵",label:"X vs Y"}];
   const needsTwo=chartType==="xy"&&selectedKeys.length<2;
-  const outlierKey=selectedKeys[0]||"";
-  const outlierData=useMemo(()=>outlierKey?buildOutlierData(chartData,outlierKey):{inliers:[],outliers:[],q1:0,q3:0,iqr:0,lower:0,upper:0,outlierCount:0,total:0},[chartData,outlierKey]);
-  const forecastKey=selectedKeys[0]||"";
-  const forecastResult=useMemo(()=>forecastKey&&chartType==="forecast"?buildForecastData(sorted,forecastKey,forecastInputWindow,forecastHorizon,forecastMethod):{chartData:[],forecastStart:null,r2:null},[sorted,forecastKey,forecastInputWindow,forecastHorizon,forecastMethod,chartType]);
 
   return(
-    <div style={{flex:1,overflowY:"auto",padding:8,display:"flex",flexDirection:"column",gap:8,background:"#FFFFF0"}}>
+    <div style={{flex:1,overflowY:"auto",padding:14,display:"flex",flexDirection:"column",gap:12,background:"#FFFFF0"}}>
       <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
         <div>
           <div style={{fontSize:13,fontWeight:700,color:C.textDark,textTransform:"uppercase",letterSpacing:"0.4px"}}>Process Monitoring</div>
-          <div style={{fontSize:11,color:C.muted,marginTop:2}}>Trend · Histogram · X vs Y · Outlier · Custom Forecast — select up to 8 parameters</div>
+          <div style={{fontSize:11,color:C.muted,marginTop:2}}>Trend · Histogram · X vs Y — select up to 8 parameters · use L/R buttons to assign axis side</div>
         </div>
         <div style={{display:"flex",gap:4}}>
           {TIME_WINDOWS.map(tw=>(<button key={tw} className={`time-btn${timeWindow===tw?" active":""}`} onClick={()=>setTimeWindow(tw)}>{tw}</button>))}
         </div>
       </div>
-      <div style={{display:"grid",gridTemplateColumns:"1.4fr 1fr",gap:8,flex:1,minHeight:0}}>
-        <div style={{background:C.white,borderRadius:8,padding:8,border:`1px solid ${C.border}`,display:"flex",flexDirection:"column",gap:6}}>
+      <div style={{display:"grid",gridTemplateColumns:"1.4fr 1fr",gap:12,flex:1,minHeight:500}}>
+        <div style={{background:C.white,borderRadius:8,padding:12,border:`1px solid ${C.border}`,display:"flex",flexDirection:"column",gap:8}}>
           <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",paddingBottom:10,borderBottom:`2px solid ${C.border}`}}>
             <div>
-              <div style={{fontSize:11,fontWeight:700,color:C.muted,textTransform:"uppercase",letterSpacing:"0.8px"}}>{chartType==="trend"?"TREND CHART":chartType==="histogram"?"DISTRIBUTION (HISTOGRAM)":chartType==="outlier"?"OUTLIER ANALYSIS (BOX & WHISKER)":chartType==="forecast"?"CUSTOM FORECAST":"X vs Y SCATTER"}</div>
+              <div style={{fontSize:11,fontWeight:700,color:C.muted,textTransform:"uppercase",letterSpacing:"0.8px"}}>{chartType==="trend"?"TREND CHART":chartType==="histogram"?"DISTRIBUTION (HISTOGRAM)":"X vs Y SCATTER"}</div>
               {chartType==="trend"&&selectedKeys.length>1&&(<div style={{fontSize:9,color:C.muted,marginTop:2}}>Each parameter has its own Y-axis</div>)}
             </div>
             <div style={{display:"flex",background:C.offWhite,borderRadius:7,padding:3,gap:2}}>
-              {chartTypeTabs.map(t=>(<button key={t.key} onClick={()=>setChartType(t.key)} style={{padding:"4px 10px",borderRadius:5,border:"none",cursor:"pointer",fontSize:10,fontWeight:600,display:"flex",alignItems:"center",gap:4,background:chartType===t.key?C.accent:"transparent",color:chartType===t.key?C.white:C.muted,transition:"all 0.15s"}}><Icon name={t.icon} size={14}/> {t.label}</button>))}
+              {chartTypeTabs.map(t=>(<button key={t.key} onClick={()=>setChartType(t.key)} style={{padding:"4px 10px",borderRadius:5,border:"none",cursor:"pointer",fontSize:10,fontWeight:600,display:"flex",alignItems:"center",gap:4,background:chartType===t.key?C.accent:"transparent",color:chartType===t.key?C.white:C.muted,transition:"all 0.15s"}}>{t.icon} {t.label}</button>))}
             </div>
           </div>
           {chartType==="xy"&&selectedKeys.length>=2&&(
@@ -1247,7 +1138,7 @@ function MonitoringPage({trend,latest}){
                 </select>
               </div>
               <div style={{display:"flex",alignItems:"center",gap:5}}>
-                <span style={{fontSize:9,fontWeight:700,color:C.white,background:"linear-gradient(90deg,#3b82f6,#00c9b1,#f59e0b,#ef4444)",padding:"2px 7px",borderRadius:4,letterSpacing:"0.4px",display:"flex",alignItems:"center",gap:3}}><Icon name="palette" size={11}/>COLOR</span>
+                <span style={{fontSize:9,fontWeight:700,color:C.white,background:"linear-gradient(90deg,#3b82f6,#00c9b1,#f59e0b,#ef4444)",padding:"2px 7px",borderRadius:4,letterSpacing:"0.4px"}}>🎨 COLOR</span>
                 <select value={colorKeyVal} onChange={e=>setXyColor(e.target.value)} style={{padding:"4px 8px",border:`1px solid ${C.border}`,borderRadius:6,fontSize:11,color:C.textDark,outline:"none",fontFamily:font,background:C.white,minWidth:150}}>
                   <option value="">— None (single colour) —</option>
                   {ALL_PARAMS.map(p=><option key={p.key} value={p.key}>{p.label}{p.unit?` (${p.unit})`:""}</option>)}
@@ -1263,55 +1154,6 @@ function MonitoringPage({trend,latest}){
                 {selectedKeys.map(k=>{const p=ALL_PARAMS.find(x=>x.key===k);return<option key={k} value={k}>{p?.label??k}</option>;})}
               </select>
               <span style={{fontSize:10,color:C.muted}}>Showing distribution of first selected</span>
-            </div>
-          )}
-          {chartType==="outlier"&&selectedKeys.length>1&&(
-            <div style={{display:"flex",gap:8,alignItems:"center"}}>
-              <span style={{fontSize:10,color:C.muted,fontWeight:600}}>PARAMETER:</span>
-              <select value={outlierKey} onChange={e=>setSelectedKeys(prev=>[e.target.value,...prev.filter(k=>k!==e.target.value)])} style={{padding:"4px 8px",border:`1px solid ${C.border}`,borderRadius:6,fontSize:11,color:C.textDark,outline:"none",fontFamily:font,background:C.white}}>
-                {selectedKeys.map(k=>{const p=ALL_PARAMS.find(x=>x.key===k);return<option key={k} value={k}>{p?.label??k}</option>;})}
-              </select>
-              <span style={{fontSize:10,color:C.muted}}>Showing outliers of first selected</span>
-            </div>
-          )}
-          {chartType==="forecast"&&(
-            <div style={{display:"flex",gap:10,alignItems:"flex-end",flexWrap:"wrap",padding:"6px 0",borderBottom:`1px solid ${C.border}`}}>
-              {selectedKeys.length>0&&(
-                <div style={{display:"flex",flexDirection:"column",gap:3}}>
-                  <span style={{fontSize:9,fontWeight:700,color:C.muted,textTransform:"uppercase",letterSpacing:"0.5px"}}>Parameter</span>
-                  <select value={forecastKey} onChange={e=>setSelectedKeys(prev=>[e.target.value,...prev.filter(k=>k!==e.target.value)])} style={{padding:"4px 8px",border:`1px solid ${C.border}`,borderRadius:6,fontSize:11,color:C.textDark,outline:"none",fontFamily:font,background:C.white}}>
-                    {selectedKeys.map(k=>{const p=ALL_PARAMS.find(x=>x.key===k);return<option key={k} value={k}>{p?.label??k}</option>;})}
-                  </select>
-                </div>
-              )}
-              <div style={{display:"flex",flexDirection:"column",gap:3}}>
-                <span style={{fontSize:9,fontWeight:700,color:C.muted,textTransform:"uppercase",letterSpacing:"0.5px"}}>Input Window (pts)</span>
-                <input type="number" min={5} max={500} value={forecastInputWindow}
-                  onChange={e=>setForecastInputWindow(Math.max(5,Math.min(500,Number(e.target.value)||20)))}
-                  style={{width:80,padding:"4px 8px",border:`1px solid ${C.border}`,borderRadius:6,fontSize:11,color:C.textDark,outline:"none",fontFamily:font}}/>
-              </div>
-              <div style={{display:"flex",flexDirection:"column",gap:3}}>
-                <span style={{fontSize:9,fontWeight:700,color:C.muted,textTransform:"uppercase",letterSpacing:"0.5px"}}>Forecast Horizon (pts)</span>
-                <input type="number" min={1} max={200} value={forecastHorizon}
-                  onChange={e=>setForecastHorizon(Math.max(1,Math.min(200,Number(e.target.value)||10)))}
-                  style={{width:80,padding:"4px 8px",border:`1px solid ${C.border}`,borderRadius:6,fontSize:11,color:C.textDark,outline:"none",fontFamily:font}}/>
-              </div>
-              <div style={{display:"flex",flexDirection:"column",gap:3}}>
-                <span style={{fontSize:9,fontWeight:700,color:C.muted,textTransform:"uppercase",letterSpacing:"0.5px"}}>Forecast Method</span>
-                <select value={forecastMethod} onChange={e=>setForecastMethod(e.target.value)} style={{padding:"4px 8px",border:`1px solid ${C.border}`,borderRadius:6,fontSize:11,color:C.textDark,outline:"none",fontFamily:font,background:C.white,cursor:"pointer"}}>
-                  <option value="linear">Linear Regression</option>
-                  <option value="poly2">Polynomial (2°)</option>
-                  <option value="poly3">Polynomial (3°)</option>
-                  <option value="movavg">Moving Average</option>
-                  <option value="expsmooth">Exponential Smoothing</option>
-                </select>
-              </div>
-              {forecastResult.r2!==null&&(
-                <div style={{display:"flex",flexDirection:"column",gap:3,marginLeft:8}}>
-                  <span style={{fontSize:9,fontWeight:700,color:C.muted,textTransform:"uppercase",letterSpacing:"0.5px"}}>R² (Fit Quality)</span>
-                  <span style={{fontSize:14,fontWeight:700,color:forecastResult.r2>0.9?C.green:forecastResult.r2>0.7?C.orange:C.red,lineHeight:"28px"}}>{forecastResult.r2.toFixed(3)}</span>
-                </div>
-              )}
             </div>
           )}
           {chartType==="trend"&&selectedKeys.length>0&&(
@@ -1333,7 +1175,7 @@ function MonitoringPage({trend,latest}){
           {chartType==="trend"&&<ZoomBar isZoomed={zoom.isZoomed} zoomPct={zoom.zoomPct} resetZoom={zoom.resetZoom}/>}
           {selectedKeys.length===0?(
             <div style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",color:C.muted,fontSize:13,textAlign:"center",padding:40,flexDirection:"column",gap:8}}>
-              <Icon name="check_box" size={28} color={C.muted}/>Select one or more parameters from the table on the right.
+              <div style={{fontSize:28}}>☑</div>Select one or more parameters from the table on the right.
             </div>
           ):chartType==="trend"?(
             <div {...zoom.wrapProps} style={{flex:1,minHeight:350}}>
@@ -1373,152 +1215,10 @@ function MonitoringPage({trend,latest}){
                 return(<div style={{display:"grid",gridTemplateColumns:"repeat(5,1fr)",gap:6,marginTop:8}}>{[["Min",mn],["Max",mx],["Mean",mean],["Median",median],["Std Dev",std]].map(([lbl,val])=>(<div key={lbl} style={{textAlign:"center",background:C.offWhite,borderRadius:6,padding:"6px 4px"}}><div style={{fontSize:9,color:C.muted,fontWeight:600,textTransform:"uppercase"}}>{lbl}</div><div style={{fontSize:13,fontWeight:700,color:C.accent}}>{typeof val==="number"?val.toFixed(2):"—"}</div></div>))}</div>);
               })()}
             </div>
-          ):chartType==="outlier"?(
-            !outlierKey?(
-              <div style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",color:C.muted,fontSize:13,textAlign:"center",padding:40,flexDirection:"column",gap:8}}>
-                <Icon name="bubble_chart" size={28} color={C.muted}/>Select a parameter from the table to analyse outliers.
-              </div>
-            ):(
-              <div style={{flex:1,minHeight:350,display:"flex",flexDirection:"column",gap:8}}>
-                <div style={{display:"flex",gap:6,alignItems:"center",flexWrap:"wrap"}}>
-                  {[
-                    {label:"Q1",val:outlierData.q1,color:C.accent},
-                    {label:"Q3",val:outlierData.q3,color:C.accent},
-                    {label:"IQR",val:outlierData.iqr,color:C.teal},
-                    {label:"Lower Fence",val:outlierData.lower,color:C.green},
-                    {label:"Upper Fence",val:outlierData.upper,color:C.orange},
-                    {label:"Outliers",val:outlierData.outlierCount,color:C.red,isCount:true},
-                  ].map(({label,val,color,isCount})=>(
-                    <div key={label} style={{display:"flex",flexDirection:"column",alignItems:"center",background:C.offWhite,borderRadius:6,padding:"5px 10px",minWidth:72}}>
-                      <div style={{fontSize:8,color:C.muted,fontWeight:700,textTransform:"uppercase",letterSpacing:"0.5px"}}>{label}</div>
-                      <div style={{fontSize:12,fontWeight:700,color,marginTop:2}}>{typeof val==="number"?isCount?val:val.toFixed(2):"—"}</div>
-                    </div>
-                  ))}
-                  <div style={{marginLeft:"auto",fontSize:10,color:C.muted}}>
-                    <span style={{color:C.red,fontWeight:700}}>{outlierData.outlierCount}</span> outlier{outlierData.outlierCount!==1?"s":""} / <span style={{fontWeight:600}}>{outlierData.total}</span> pts
-                    {outlierData.total>0&&<span style={{marginLeft:4,color:C.orange}}>({((outlierData.outlierCount/outlierData.total)*100).toFixed(1)}%)</span>}
-                  </div>
-                </div>
-                <div style={{display:"flex",gap:12,alignItems:"center",fontSize:10}}>
-                  <span style={{display:"flex",alignItems:"center",gap:4}}><span style={{width:10,height:10,borderRadius:"50%",background:C.green,display:"inline-block"}}/><span style={{color:C.textMid}}>Inlier</span></span>
-                  <span style={{display:"flex",alignItems:"center",gap:4}}><span style={{width:10,height:10,borderRadius:"50%",background:C.red,display:"inline-block"}}/><span style={{color:C.textMid}}>Outlier</span></span>
-                  <span style={{color:C.muted,fontSize:9}}>· Fences: Q1−1.5×IQR &amp; Q3+1.5×IQR</span>
-                </div>
-                <div style={{flex:1,minHeight:260}}>
-                  <ResponsiveContainer width="100%" height="100%">
-                    <ScatterChart margin={{top:8,right:20,left:axisWidth(computeDomain(chartData,outlierKey))+4,bottom:24}}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9"/>
-                      <XAxis dataKey="time" type="number" name="Time" scale="time"
-                        domain={["auto","auto"]}
-                        tick={{fontSize:9,fill:C.muted}}
-                        tickFormatter={v=>fmtTime(new Date(v))}
-                        label={{value:"Time",offset:-12,position:"insideBottom",style:{fontSize:9,fill:C.muted}}}/>
-                      <YAxis dataKey="value" type="number" name={outlierKey}
-                        tick={{fontSize:9,fill:C.muted}}
-                        width={axisWidth(computeDomain(chartData,outlierKey))}
-                        domain={[
-                          d=>Math.min(d,outlierData.lower)*0.98,
-                          d=>Math.max(d,outlierData.upper)*1.02,
-                        ]}
-                        tickFormatter={v=>typeof v==="number"?v.toFixed(0):v}
-                        label={{value:`${ALL_PARAMS.find(x=>x.key===outlierKey)?.label||outlierKey}${ALL_PARAMS.find(x=>x.key===outlierKey)?.unit?" ("+ALL_PARAMS.find(x=>x.key===outlierKey)?.unit+")":""}`,angle:-90,position:"insideLeft",style:{fontSize:9,fill:C.muted}}}/>
-                      <ZAxis range={[30,30]}/>
-                      <ReferenceLine yAxisId={undefined} y={outlierData.upper} stroke={C.orange} strokeDasharray="5 3" strokeWidth={1.5} label={{value:"Upper",position:"right",fill:C.orange,fontSize:8}}/>
-                      <ReferenceLine y={outlierData.lower} stroke={C.green} strokeDasharray="5 3" strokeWidth={1.5} label={{value:"Lower",position:"right",fill:C.green,fontSize:8}}/>
-                      <ReferenceLine y={outlierData.q1} stroke={C.accent} strokeDasharray="3 3" strokeWidth={1} label={{value:"Q1",position:"right",fill:C.accent,fontSize:8}}/>
-                      <ReferenceLine y={outlierData.q3} stroke={C.accent} strokeDasharray="3 3" strokeWidth={1} label={{value:"Q3",position:"right",fill:C.accent,fontSize:8}}/>
-                      <Tooltip cursor={{strokeDasharray:"3 3"}} content={({active,payload})=>{
-                        if(!active||!payload?.length)return null;
-                        const pt=payload[0]?.payload;
-                        const isOut=pt?.value<outlierData.lower||pt?.value>outlierData.upper;
-                        const p=ALL_PARAMS.find(x=>x.key===outlierKey);
-                        return(
-                          <div style={{background:C.white,border:`1px solid ${isOut?C.red:C.green}`,borderRadius:8,padding:"9px 13px",fontSize:11,boxShadow:"0 4px 16px rgba(0,0,0,0.12)",minWidth:190}}>
-                            <div style={{color:C.muted,marginBottom:5,fontSize:10,fontWeight:600,borderBottom:`1px solid ${C.border}`,paddingBottom:4}}>
-                              {pt?.time?new Date(pt.time).toLocaleString():""}
-                            </div>
-                            <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:4}}>
-                              <span style={{width:8,height:8,borderRadius:"50%",background:isOut?C.red:C.green,flexShrink:0}}/>
-                              <span style={{color:C.textMid,flex:1}}>{p?.label||outlierKey}</span>
-                              <span style={{fontWeight:700,color:isOut?C.red:C.green}}>{pt?.value?.toFixed(3)}<span style={{fontWeight:400,color:C.muted,marginLeft:3,fontSize:9}}>{p?.unit}</span></span>
-                            </div>
-                            <div style={{fontSize:9,color:isOut?C.red:C.green,fontWeight:700,marginTop:4,textAlign:"center",background:isOut?"#fdecea":"#e9f7ee",borderRadius:4,padding:"2px 6px"}}>
-                              {isOut?"⚠ OUTLIER":"✓ INLIER"}
-                            </div>
-                          </div>
-                        );
-                      }}/>
-                      <Scatter name="Inliers" data={outlierData.inliers.map(r=>({...r,time:new Date(r.time).getTime()}))} isAnimationActive={false}
-                        shape={(props)=>{const{cx,cy}=props;return<circle cx={cx} cy={cy} r={5} fill={C.green} fillOpacity={0.75} stroke={C.green} strokeWidth={0.5} strokeOpacity={0.5}/>;}}/>
-                      <Scatter name="Outliers" data={outlierData.outliers.map(r=>({...r,time:new Date(r.time).getTime()}))} isAnimationActive={false}
-                        shape={(props)=>{const{cx,cy}=props;return<circle cx={cx} cy={cy} r={6} fill={C.red} fillOpacity={0.85} stroke={C.red} strokeWidth={1}/>;}}/>
-                    </ScatterChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
-            )
-          ):chartType==="forecast"?(
-            !forecastKey?(
-              <div style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",color:C.muted,fontSize:13,textAlign:"center",padding:40,flexDirection:"column",gap:8}}>
-                <Icon name="auto_graph" size={28} color={C.muted}/>Select a parameter from the table to generate a forecast.
-              </div>
-            ):(
-              <div style={{flex:1,minHeight:350,display:"flex",flexDirection:"column",gap:8}}>
-                <div style={{display:"flex",gap:12,alignItems:"center",fontSize:10,flexWrap:"wrap"}}>
-                  <span style={{display:"flex",alignItems:"center",gap:5}}><span style={{width:24,height:3,borderRadius:2,background:C.accent,display:"inline-block"}}/><span style={{color:C.textMid}}>Actual</span></span>
-                  <span style={{display:"flex",alignItems:"center",gap:5}}><span style={{width:24,height:3,borderRadius:2,background:C.teal,display:"inline-block",borderTop:"2px dashed "+C.teal}}/><span style={{color:C.textMid}}>Fitted (input window)</span></span>
-                  <span style={{display:"flex",alignItems:"center",gap:5}}><span style={{width:24,height:3,borderRadius:2,background:C.orange,display:"inline-block"}}/><span style={{color:C.textMid}}>Forecast</span></span>
-                  <span style={{marginLeft:"auto",fontSize:9,color:C.muted}}>
-                    Input: <b>{Math.min(forecastInputWindow,sorted.filter(r=>typeof r[forecastKey]==="number").length)}</b> pts · Horizon: <b>{forecastHorizon}</b> pts · Method: <b>{{linear:"Linear",poly2:"Poly 2°",poly3:"Poly 3°",movavg:"Moving Avg",expsmooth:"Exp. Smooth"}[forecastMethod]}</b>
-                  </span>
-                </div>
-                {forecastResult.chartData.length===0?(
-                  <div style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",color:C.muted,fontSize:12}}>Not enough data points (need ≥ 3)</div>
-                ):(()=>{
-                  const fcData=forecastResult.chartData;
-                  const allVals=fcData.flatMap(r=>[r.actual,r.forecast,r.fitted].filter(v=>typeof v==="number"&&isFinite(v)));
-                  const yMin=Math.min(...allVals),yMax=Math.max(...allVals);
-                  const yPad=(yMax-yMin)*0.12||1;
-                  const yDomain=[+(yMin-yPad).toFixed(2),+(yMax+yPad).toFixed(2)];
-                  const aw=axisWidth(yDomain);
-                  const fParam=ALL_PARAMS.find(x=>x.key===forecastKey);
-                  return(
-                    <div style={{flex:1,minHeight:280}}>
-                      <ResponsiveContainer width="100%" height="100%">
-                        <LineChart data={fcData} margin={{top:8,right:60,left:aw,bottom:24}}>
-                          <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9"/>
-                          <XAxis dataKey="time" type="number" scale="time" domain={["auto","auto"]}
-                            tick={{fontSize:9,fill:C.muted}} tickFormatter={v=>fmtTime(v)} interval="preserveStartEnd"
-                            label={{value:"Time",offset:-12,position:"insideBottom",style:{fontSize:9,fill:C.muted}}}/>
-                          <YAxis width={aw} tick={{fontSize:9,fill:C.muted}} domain={yDomain}
-                            tickFormatter={v=>typeof v==="number"?v.toFixed(0):v}
-                            label={{value:fParam?.unit?`${fParam.label} (${fParam.unit})`:fParam?.label||forecastKey,angle:-90,position:"insideLeft",style:{fontSize:9,fill:C.muted}}}/>
-                          {forecastResult.forecastStart&&(
-                            <ReferenceLine x={forecastResult.forecastStart} stroke={C.orange} strokeDasharray="6 3" strokeWidth={1.5}
-                              label={{value:"Forecast →",position:"insideTopRight",fill:C.orange,fontSize:8,fontWeight:700}}/>
-                          )}
-                          <Tooltip contentStyle={{fontSize:11,borderRadius:6,border:`1px solid ${C.border}`,boxShadow:"0 4px 12px rgba(0,0,0,0.1)"}}
-                            labelFormatter={v=>`Time: ${new Date(v).toLocaleString()}`}
-                            formatter={(val,name)=>{
-                              const labels={actual:"Actual",fitted:"Fitted",forecast:"Forecast"};
-                              const colors={actual:C.accent,fitted:C.teal,forecast:C.orange};
-                              return[<span style={{color:colors[name]??C.textDark,fontWeight:700}}>{typeof val==="number"?val.toFixed(3):val} <span style={{fontWeight:400,color:C.muted,fontSize:9}}>{fParam?.unit||""}</span></span>,labels[name]??name];
-                            }}/>
-                          <Legend formatter={v=>({actual:"Actual",fitted:"Fitted",forecast:"Forecast"})[v]??v} wrapperStyle={{fontSize:10}}/>
-                          <Line dataKey="actual" name="actual" stroke={C.accent} strokeWidth={2} dot={false} connectNulls={false} isAnimationActive={false} activeDot={{r:4}}/>
-                          <Line dataKey="fitted" name="fitted" stroke={C.teal} strokeWidth={1.5} strokeDasharray="5 3" dot={false} connectNulls={false} isAnimationActive={false}/>
-                          <Line dataKey="forecast" name="forecast" stroke={C.orange} strokeWidth={2} strokeDasharray="7 3" dot={{r:3,fill:C.orange}} connectNulls={false} isAnimationActive={false} activeDot={{r:5}}/>
-                        </LineChart>
-                      </ResponsiveContainer>
-                    </div>
-                  );
-                })()}
-              </div>
-            )
           ):chartType==="xy"?(
             needsTwo?(
               <div style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",color:C.muted,fontSize:12,textAlign:"center",padding:20,flexDirection:"column",gap:6}}>
-                <Icon name="scatter_plot" size={22} color={C.muted}/>
+                <div style={{fontSize:22}}>🔵</div>
                 Select at least 2 parameters to plot X vs Y scatter
               </div>
             ):(
@@ -1533,7 +1233,7 @@ function MonitoringPage({trend,latest}){
                   </span>
                   {colorKeyVal&&<><span>·</span>
                   <span style={{fontWeight:600,background:"linear-gradient(90deg,#3b82f6,#00c9b1,#f59e0b,#ef4444)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>
-                    Color: {ALL_PARAMS.find(x=>x.key===colorKeyVal)?.label}
+                    🎨 Color: {ALL_PARAMS.find(x=>x.key===colorKeyVal)?.label}
                     {" "}[{colorRange.min.toFixed(1)} – {colorRange.max.toFixed(1)}]
                   </span></>}
                   <span style={{marginLeft:"auto"}}>{xyData.length} data points</span>
@@ -1707,34 +1407,32 @@ function OpportunityCard({icon,value,unit,label,sub,color=C.white}){
 function KPICard({label,actual,optimum,unit,highlight,trendKey,onTrendClick}){
   const isOff=actual!=null&&optimum!=null&&Math.abs(actual-optimum)/(optimum||1)>0.05;
   const valColor=highlight?C.orange:isOff?C.red:C.accent;const isClickable=!!(onTrendClick&&trendKey);
-  return(
-    <div className="kpi-card" style={{background:C.white,border:`1px solid ${C.border}`,borderRadius:6,padding:"6px 10px",minWidth:0,height:"100%",boxSizing:"border-box",display:"flex",flexDirection:"column",justifyContent:"flex-start",alignItems:"center",textAlign:"center",position:"relative"}}>
-      <div style={{fontSize:9,fontWeight:600,color:C.textDark,textTransform:"uppercase",letterSpacing:"0.5px",marginBottom:4,display:"flex",justifyContent:"center",alignItems:"center",width:"100%",position:"relative"}}>
-        <span style={{textAlign:"center"}}>{label}</span>
-        {isClickable&&<span style={{fontSize:8,color:C.accent,cursor:"pointer",position:"absolute",right:0}} onClick={()=>onTrendClick(trendKey)}>↗</span>}
-      </div>
-      {optimum!=null?(
-        <div style={{display:"flex",alignItems:"center",width:"100%"}}>
-          <div style={{flex:1,textAlign:"center"}}>
-            <div style={{fontSize:12,fontWeight:700,color:valColor,lineHeight:1,cursor:isClickable?"pointer":"default"}} onClick={isClickable?()=>onTrendClick(trendKey):undefined}>{actual??"—"}</div>
-            {unit&&<div style={{fontSize:8,color:C.muted,marginTop:1}}>{unit}</div>}
-            <div style={{fontSize:8,color:C.muted,marginTop:1}}>Actual</div>
-          </div>
-          <div style={{width:1,alignSelf:"stretch",background:C.border,flexShrink:0,margin:"0 6px"}}/>
-          <div style={{flex:1,textAlign:"center"}}>
-            <div style={{fontSize:12,fontWeight:700,color:C.accentDim,lineHeight:1}}>{optimum}</div>
-            {unit&&<div style={{fontSize:8,color:C.muted,marginTop:1}}>{unit}</div>}
-            <div style={{fontSize:8,color:C.muted,marginTop:1}}>Opt</div>
-          </div>
-        </div>
-      ):(
-        <>
+  return(<div className="kpi-card" style={{background:C.white,border:`1px solid ${C.border}`,borderRadius:6,padding:"10px 12px",minWidth:0}}>
+    <div style={{fontSize:10,fontWeight:600,color:C.textDark,textTransform:"uppercase",letterSpacing:"0.5px",marginBottom:8,display:"flex",justifyContent:"center",alignItems:"center",textAlign:"center",position:"relative"}}>
+      <span style={{textAlign:"center"}}>{label}</span>
+      {isClickable&&<span style={{fontSize:8,color:C.accent,cursor:"pointer",position:"absolute",right:0}} onClick={()=>onTrendClick(trendKey)}>↗</span>}
+    </div>
+    {optimum!=null?(
+      <div style={{display:"flex",alignItems:"center",gap:0}}>
+        <div style={{flex:1,textAlign:"center"}}>
           <div style={{fontSize:12,fontWeight:700,color:valColor,lineHeight:1,cursor:isClickable?"pointer":"default"}} onClick={isClickable?()=>onTrendClick(trendKey):undefined}>{actual??"—"}</div>
           {unit&&<div style={{fontSize:9,color:C.muted,marginTop:2}}>{unit}</div>}
-        </>
-      )}
-    </div>
-  );
+          <div style={{fontSize:9,color:C.muted,marginTop:2}}>Actual</div>
+        </div>
+        <div style={{width:1,height:40,background:C.border,flexShrink:0,margin:"0 8px"}}/>
+        <div style={{flex:1,textAlign:"center"}}>
+          <div style={{fontSize:12,fontWeight:700,color:C.accentDim,lineHeight:1}}>{optimum}</div>
+          {unit&&<div style={{fontSize:9,color:C.muted,marginTop:2}}>{unit}</div>}
+          <div style={{fontSize:9,color:C.muted,marginTop:2}}>Optimum</div>
+        </div>
+      </div>
+    ):(
+      <div style={{textAlign:"center"}}>
+        <div style={{fontSize:12,fontWeight:700,color:valColor,lineHeight:1,cursor:isClickable?"pointer":"default"}} onClick={isClickable?()=>onTrendClick(trendKey):undefined}>{actual??"—"}</div>
+        {unit&&<div style={{fontSize:9,color:C.muted,marginTop:3}}>{unit}</div>}
+      </div>
+    )}
+  </div>);
 }
 
 const PIE_COLORS=[C.red,C.accent,C.green];
@@ -1766,7 +1464,7 @@ function ChartPanel({d,trend,runlengthTrend}){
   const domain=(!isYield&&primaryKey&&dataForChart?.length)?computeDomain(dataForChart,primaryKey):["auto","auto"];
   const xTickFormatter=(v)=>{if(cfg.xKey==="cycletime"){const num=Number(v);return Number.isFinite(num)?num.toFixed(2):String(v);}return fmtTime(v);};
   const labelFormatter=(v)=>{if(cfg.xKey==="cycletime")return`Cycle: ${v}`;return toDate(v).toLocaleString();};
-  return(<div style={{background:C.white,borderRadius:8,padding:8,border:`1px solid ${C.border}`,display:"flex",flexDirection:"column"}}>
+  return(<div style={{background:C.white,borderRadius:8,padding:14,border:`1px solid ${C.border}`,display:"flex",flexDirection:"column"}}>
     <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:10,paddingBottom:8,borderBottom:`1px solid ${C.border}`}}>
       <div style={{fontSize:11,fontWeight:700,color:C.textDark,textTransform:"uppercase",letterSpacing:"0.5px"}}>{cfg.header}</div>
       <select value={view} onChange={e=>setView(e.target.value)} style={{padding:"4px 10px",borderRadius:5,border:`1px solid ${C.border}`,cursor:"pointer",fontSize:10,fontWeight:700,background:C.accentLight,color:C.accent,outline:"none"}}>
@@ -1793,7 +1491,7 @@ function ChartPanel({d,trend,runlengthTrend}){
         </LineChart>
       </ResponsiveContainer>
       <div style={{fontSize:10,color:C.muted,marginTop:4}}>
-        {view==="hgi"?(<>Current: <span style={{fontWeight:700,color:C.accent}}>{d.hgi?.toFixed(1)}</span> · Band: <span style={{fontWeight:600,color:C.accentDim}}>{d.lower} – {d.upper}</span></>)
+        {view==="hgi"?(<>Current: <span style={{fontWeight:700,color:C.accent}}>{d.prediction?.toFixed(1)}</span> · Band: <span style={{fontWeight:600,color:C.accentDim}}>{d.lower} – {d.upper}</span></>)
         :view==="runlength"?(<>TMT: <span style={{fontWeight:700,color:C.red}}>{typeof lastRun?.TMT==="number"?lastRun.TMT.toFixed(3):"—"}</span></>)
         :view==="dp"?(<>Actual DP: <span style={{fontWeight:700,color:C.accent}}>{typeof lastMain?.actualdp==="number"?lastMain.actualdp.toFixed(2):"—"}</span></>)
         :<></>}
@@ -1833,8 +1531,8 @@ function CrudeSupplyChainPage(){
       <div style={{background:`linear-gradient(135deg,#003d6b 0%,#005580 100%)`,borderRadius:8,padding:"14px 20px",boxShadow:"0 2px 10px rgba(0,50,100,0.2)"}}>
         <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:14}}>
           <div>
-            <div style={{fontSize:13,fontWeight:700,color:C.white,letterSpacing:"0.5px",display:"flex",alignItems:"center",gap:6}}><Icon name="local_gas_station" size={15} color={C.white}/> CRUDE SUPPLY CHAIN OPTIMIZATION</div>
-            <div style={{fontSize:10,color:"rgba(255,255,255,0.65)",marginTop:3}}>General Refinery · CDU Complex · Real-time blend & economics</div>
+            <div style={{fontSize:13,fontWeight:700,color:C.white,letterSpacing:"0.5px"}}>🛢️ CRUDE SUPPLY CHAIN OPTIMIZATION</div>
+            <div style={{fontSize:10,color:"rgba(255,255,255,0.65)",marginTop:3}}>Tansein Refinery · CDU Complex · Real-time blend & economics</div>
           </div>
           <div style={{display:"flex",gap:8,alignItems:"center"}}>
             {[["INTAKE","95,420 BPD",C.accent],["MARGIN","$"+latestMargin+"/bbl",C.green],["UTIL.","94.2%",C.teal]].map(([lbl,val,col])=>(
@@ -1976,9 +1674,9 @@ function CrudeSupplyChainPage(){
       {activeTab==="optimize"&&(
         <div style={{display:"flex",flexDirection:"column",gap:12}}>
           <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:10}}>
-            {[["Total Margin Opportunity","$0.74/bbl","+$1.02M/day",C.green,"attach_money"],["Active Optimization Flags","3 Items","2 High Priority",C.orange,"warning_amber"],["Next Review","Today 14:00","Blend Planning Meeting",C.accent,"calendar_today"]].map(([lbl,val,sub,col,icon])=>(
+            {[["Total Margin Opportunity","$0.74/bbl","+$1.02M/day",C.green,"💰"],["Active Optimization Flags","3 Items","2 High Priority",C.orange,"⚠️"],["Next Review","Today 14:00","Blend Planning Meeting",C.accent,"📅"]].map(([lbl,val,sub,col,icon])=>(
               <div key={lbl} style={{background:C.white,borderRadius:10,padding:"14px 16px",border:`1px solid ${C.border}`,display:"flex",gap:12,alignItems:"center"}}>
-                <div style={{opacity:0.8}}><Icon name={icon} size={28} color={col}/></div>
+                <div style={{fontSize:28,opacity:0.8}}>{icon}</div>
                 <div><div style={{fontSize:10,color:C.muted,fontWeight:600,textTransform:"uppercase",letterSpacing:"0.4px",marginBottom:4}}>{lbl}</div><div style={{fontSize:20,fontWeight:700,color:col}}>{val}</div><div style={{fontSize:10,color:C.muted,marginTop:2}}>{sub}</div></div>
               </div>
             ))}
@@ -2011,7 +1709,7 @@ function CrudeSupplyChainPage(){
 
 const equipmentSchema = {
   heaters: {
-    type: "array", label: "Heater Configuration", icon: "local_fire_department",
+    type: "array", label: "Heater Configuration", icon: "🔥",
     item: {
       heater_id:{ type:"string", label:"Heater ID", required:true },
       passes:{ type:"number", label:"No. of Passes", min:1, required:true },
@@ -2021,7 +1719,7 @@ const equipmentSchema = {
     },
   },
   coke_drums: {
-    type: "array", label: "Coke Drum Configuration", icon: "factory",
+    type: "array", label: "Coke Drum Configuration", icon: "🏭",
     item: {
       drum_id:{ type:"string", label:"Drum ID", required:true },
       height:{ type:"number", label:"Height (m)", min:0.1, required:true },
@@ -2067,7 +1765,7 @@ function DevSchemaArraySection({ sectionKey, sectionDef, items, onChange }) {
     <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
       <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", paddingBottom:8, borderBottom:`2px solid ${C.border}` }}>
         <div style={{ display:"flex", alignItems:"center", gap:8 }}>
-          <Icon name={sectionDef.icon} size={20} color={C.accent}/>
+          <span style={{ fontSize:20 }}>{sectionDef.icon}</span>
           <div>
             <div style={{ fontSize:13, fontWeight:700, color:C.textDark }}>{sectionDef.label}</div>
             <div style={{ fontSize:9, color:C.muted }}>{items.length} item{items.length!==1?"s":""} configured</div>
@@ -2114,7 +1812,7 @@ function DCUDeveloperSetupPanel({ onClose }) {
       <div onClick={e=>e.stopPropagation()} style={{position:"absolute",right:0,top:0,bottom:0,width:"min(800px,95vw)",background:C.offWhite,display:"flex",flexDirection:"column",boxShadow:"-10px 0 60px rgba(10,22,40,0.32)",fontFamily:font}}>
         <div style={{background:`linear-gradient(135deg,${C.navyMid} 0%,#0a3560 100%)`,padding:"14px 20px",flexShrink:0,display:"flex",alignItems:"center",justifyContent:"space-between",gap:12}}>
           <div style={{display:"flex",alignItems:"center",gap:12}}>
-            <div style={{width:40,height:40,borderRadius:10,background:"rgba(0,180,216,0.2)",border:"1px solid rgba(0,180,216,0.4)",display:"flex",alignItems:"center",justifyContent:"center"}}><Icon name="settings" size={22} color={C.accent}/></div>
+            <div style={{width:40,height:40,borderRadius:10,background:"rgba(0,180,216,0.2)",border:"1px solid rgba(0,180,216,0.4)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:20}}>⚙️</div>
             <div>
               <div style={{fontSize:14,fontWeight:700,color:C.white,letterSpacing:"0.3px"}}>DCU Developer Setup</div>
               <div style={{fontSize:10,color:"rgba(255,255,255,0.5)",marginTop:1}}>Schema-driven equipment configuration · {totalItems} item{totalItems!==1?"s":""} defined</div>
@@ -2122,12 +1820,12 @@ function DCUDeveloperSetupPanel({ onClose }) {
           </div>
           <div style={{display:"flex",gap:8,alignItems:"center"}}>
             <button onClick={()=>setShowJson(p=>!p)} style={{padding:"6px 14px",borderRadius:6,border:`1px solid ${showJson?C.accent:"rgba(255,255,255,0.2)"}`,background:showJson?"rgba(0,180,216,0.2)":"transparent",color:showJson?C.accent:"rgba(255,255,255,0.7)",fontSize:11,fontWeight:600,cursor:"pointer",fontFamily:font,transition:"all 0.15s"}}>{showJson?"◀ Hide JSON":"{ } Preview JSON"}</button>
-            <button onClick={handleSave} style={{padding:"7px 20px",borderRadius:7,border:"none",background:savedFlash?C.green:C.accent,color:C.white,fontSize:12,fontWeight:700,cursor:"pointer",fontFamily:font,transition:"background 0.2s",display:"flex",alignItems:"center",gap:6}}>{savedFlash?<><Icon name="check" size={14}/> Saved!</>:<><Icon name="save" size={14}/> Save Config</>}</button>
+            <button onClick={handleSave} style={{padding:"7px 20px",borderRadius:7,border:"none",background:savedFlash?C.green:C.accent,color:C.white,fontSize:12,fontWeight:700,cursor:"pointer",fontFamily:font,transition:"background 0.2s",display:"flex",alignItems:"center",gap:6}}>{savedFlash?"✓ Saved!":"💾 Save Config"}</button>
             <button onClick={onClose} style={{width:32,height:32,borderRadius:"50%",border:"1px solid rgba(255,255,255,0.2)",background:"rgba(255,255,255,0.08)",cursor:"pointer",fontSize:16,color:"rgba(255,255,255,0.7)",display:"flex",alignItems:"center",justifyContent:"center"}}>✕</button>
           </div>
         </div>
         <div style={{background:C.white,borderBottom:`1px solid ${C.border}`,padding:"0 20px",display:"flex",gap:2,flexShrink:0}}>
-          {Object.entries(equipmentSchema).map(([key,def])=>{const count=config.equipment[key]?.length??0;const isActive=activeTab===key;return(<div key={key} onClick={()=>setActiveTab(key)} style={{padding:"10px 18px",cursor:"pointer",fontSize:11,fontWeight:isActive?700:500,color:isActive?C.accent:C.muted,borderBottom:`2px solid ${isActive?C.accent:"transparent"}`,marginBottom:-1,display:"flex",alignItems:"center",gap:7,transition:"all 0.15s",userSelect:"none"}}><Icon name={def.icon} size={14} color={isActive?C.accent:C.muted}/>{def.label}{count>0&&<span style={{background:isActive?C.accent:C.border,color:isActive?C.white:C.muted,borderRadius:20,padding:"1px 8px",fontSize:9,fontWeight:700}}>{count}</span>}</div>);})}
+          {Object.entries(equipmentSchema).map(([key,def])=>{const count=config.equipment[key]?.length??0;const isActive=activeTab===key;return(<div key={key} onClick={()=>setActiveTab(key)} style={{padding:"10px 18px",cursor:"pointer",fontSize:11,fontWeight:isActive?700:500,color:isActive?C.accent:C.muted,borderBottom:`2px solid ${isActive?C.accent:"transparent"}`,marginBottom:-1,display:"flex",alignItems:"center",gap:7,transition:"all 0.15s",userSelect:"none"}}><span>{def.icon}</span>{def.label}{count>0&&<span style={{background:isActive?C.accent:C.border,color:isActive?C.white:C.muted,borderRadius:20,padding:"1px 8px",fontSize:9,fontWeight:700}}>{count}</span>}</div>);})}
         </div>
         <div style={{flex:1,overflow:"hidden",display:"flex"}}>
           <div style={{flex:1,overflowY:"auto",padding:20,display:"flex",flexDirection:"column",gap:16}}>
@@ -2143,13 +1841,13 @@ function DCUDeveloperSetupPanel({ onClose }) {
                 <pre style={{margin:0,fontSize:10,lineHeight:1.75,color:"#7dd3fc",fontFamily:"'Cascadia Code','Fira Code','Courier New',monospace",whiteSpace:"pre-wrap",wordBreak:"break-all"}}>{JSON.stringify(config,null,2)}</pre>
               </div>
               <div style={{padding:"10px 16px",borderTop:"1px solid rgba(255,255,255,0.08)"}}>
-                <button onClick={()=>{navigator.clipboard?.writeText(JSON.stringify(config,null,2)).catch(()=>{});}} style={{width:"100%",padding:"7px",borderRadius:6,border:`1px solid rgba(0,180,216,0.35)`,background:"rgba(0,180,216,0.12)",color:C.accent,fontSize:10,fontWeight:700,cursor:"pointer",fontFamily:font,display:"flex",alignItems:"center",justifyContent:"center",gap:5}}><Icon name="content_copy" size={12} color={C.accent}/> Copy JSON to Clipboard</button>
+                <button onClick={()=>{navigator.clipboard?.writeText(JSON.stringify(config,null,2)).catch(()=>{});}} style={{width:"100%",padding:"7px",borderRadius:6,border:`1px solid rgba(0,180,216,0.35)`,background:"rgba(0,180,216,0.12)",color:C.accent,fontSize:10,fontWeight:700,cursor:"pointer",fontFamily:font}}>📋 Copy JSON to Clipboard</button>
               </div>
             </div>
           )}
         </div>
         <div style={{background:C.white,borderTop:`1px solid ${C.border}`,padding:"10px 20px",display:"flex",alignItems:"center",gap:16,flexShrink:0,flexWrap:"wrap"}}>
-          {Object.entries(equipmentSchema).map(([key,def])=>{const count=config.equipment[key]?.length??0;return(<div key={key} style={{display:"flex",alignItems:"center",gap:6,fontSize:11,color:C.textMid}}><Icon name={def.icon} size={14} color={C.muted}/><span style={{fontWeight:700,color:C.textDark}}>{count}</span><span>{def.label.replace(" Configuration",count===1?"":"s")}</span></div>);})}
+          {Object.entries(equipmentSchema).map(([key,def])=>{const count=config.equipment[key]?.length??0;return(<div key={key} style={{display:"flex",alignItems:"center",gap:6,fontSize:11,color:C.textMid}}><span>{def.icon}</span><span style={{fontWeight:700,color:C.textDark}}>{count}</span><span>{def.label.replace(" Configuration",count===1?"":"s")}</span></div>);})}
           <div style={{marginLeft:"auto",fontSize:10,color:C.muted}}>Click outside or ✕ to close · JSON updates live as you type</div>
         </div>
       </div>
@@ -2168,35 +1866,35 @@ export default function App(){
   const[kpiTrendKey,setKpiTrendKey]=useState(null);
   const[showCal,setShowCal]=useState(false);
   const[calDate,setCalDate]=useState(new Date());
-  const fetchData=async()=>{try{const res=await axios.get("https://dcu-backend-r1.onrender.com/run-model");setData(res.data);}catch(err){console.error(err);}};
+  const fetchData=async()=>{try{const res=await axios.get("http://localhost:8000/run-model");setData(res.data);}catch(err){console.error(err);}};
   useEffect(()=>{fetchData();const id=setInterval(fetchData,5000);return()=>clearInterval(id);},[]);
 
   if(!data?.latest)return(
-    <><GlobalStyle/><div style={{height:"100vh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",background:"#f0f5f9",gap:12}}><div style={{width:38,height:38,borderRadius:8,background:`linear-gradient(135deg,${C.accent},${C.navy})`,display:"flex",alignItems:"center",justifyContent:"center",marginBottom:4}}><Icon name="factory" size={22} color={C.white}/></div><div style={{width:32,height:32,border:`3px solid ${C.border}`,borderTop:`3px solid ${C.accent}`,borderRadius:"50%",animation:"spin 0.8s linear infinite"}}/><div style={{color:C.muted,fontSize:12,fontWeight:500,letterSpacing:"0.3px",marginTop:4}}>Loading DCU Data…</div></div></>
+    <><GlobalStyle/><div style={{height:"100vh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",background:"#f0f5f9",gap:12}}><div style={{width:38,height:38,borderRadius:8,background:`linear-gradient(135deg,${C.accent},${C.navy})`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,marginBottom:4}}>🏭</div><div style={{width:32,height:32,border:`3px solid ${C.border}`,borderTop:`3px solid ${C.accent}`,borderRadius:"50%",animation:"spin 0.8s linear infinite"}}/><div style={{color:C.muted,fontSize:12,fontWeight:500,letterSpacing:"0.3px",marginTop:4}}>Loading DCU Data…</div></div></>
   );
 
   const d=data.latest;
-  const alarmColor=d.hgi>d.upper?"red":d.hgi<d.lower?"orange":"green";
+  const alarmColor=d.prediction>d.upper?"red":d.prediction<d.lower?"orange":"green";
   const optFurnace=12;const optHGI=(d.lower+d.upper)/2;
   const showDeveloperInfo=activeTopNav==="DEVELOPER INFO";
   const currentNav=showDeveloperInfo?"DEVELOPER INFO":(activeUnit==="CDU"?activeCDUNav:activeDCUNav);
   const handleOpportunityClick=type=>{setActiveGauge(false);setActiveOpportunity(prev=>prev===type?null:type);};
   const handleGaugeClick=()=>{setActiveOpportunity(null);setActiveGauge(prev=>!prev);};
-  const navTopItems=[{icon:"handyman",label:"DEVELOPER INFO"},{icon:"business",label:"SEA OIL CORP"},{icon:"link",label:"GENERAL REFINERY"}];
+  const navTopItems=[{icon:"🛠️",label:"DEVELOPER INFO"},{icon:"🏢",label:"SEA OIL CORP"},{icon:"🔗",label:"TANSEIN REFINERY"}];
 
   return(
     <><GlobalStyle/>
     <div style={{display:"flex",flexDirection:"column",height:"100vh",overflow:"hidden",fontFamily:font}}>
-      <div style={{height:44,flexShrink:0,background:C.white,borderBottom:`3px solid ${C.navy}`,display:"flex",alignItems:"center",justifyContent:"space-between",padding:"0 18px",zIndex:100}}>
+      <div style={{height:60,flexShrink:0,background:C.white,borderBottom:`3px solid ${C.navy}`,display:"flex",alignItems:"center",justifyContent:"space-between",padding:"0 24px",zIndex:100}}>
         <div style={{display:"flex",alignItems:"center",gap:12}}>
-          <div style={{fontSize:13,fontWeight:800,color:C.textDark,letterSpacing:"0.3px"}}>DELAYED COKER UNIT</div>
+          <div style={{fontSize:16,fontWeight:800,color:C.textDark,letterSpacing:"0.3px"}}>DELAYED COKER UNIT</div>
         </div>
-        <div style={{display:"flex",alignItems:"center",gap:12}}>
-          {[["person","Profile"],["mail","Messages"],["help_outline","Help"],["power_settings_new","Logout"]].map(([name,title])=><span key={name} title={title} style={{cursor:"pointer",color:C.muted,opacity:0.7,display:"inline-flex"}}><Icon name={name} size={18}/></span>)}
-          <div style={{width:1,height:20,background:C.border}}/>
-          <div style={{display:"flex",alignItems:"center",gap:8}}>
-            <div style={{width:28,height:28,borderRadius:"50%",background:`linear-gradient(135deg,${C.accent},${C.teal})`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:11,fontWeight:700,color:C.white}}>J</div>
-            <div><div style={{fontSize:10,fontWeight:700,color:C.textDark}}>Welcome</div><div style={{fontSize:9,color:C.muted}}>John Doe · Admin</div></div>
+        <div style={{display:"flex",alignItems:"center",gap:16}}>
+          {["👤","✉️","❓","⏻"].map(i=><span key={i} style={{fontSize:18,cursor:"pointer",color:C.muted,opacity:0.7}}>{i}</span>)}
+          <div style={{width:1,height:24,background:C.border}}/>
+          <div style={{display:"flex",alignItems:"center",gap:10}}>
+            <div style={{width:34,height:34,borderRadius:"50%",background:`linear-gradient(135deg,${C.accent},${C.teal})`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,fontWeight:700,color:C.white}}>J</div>
+            <div><div style={{fontSize:11,fontWeight:700,color:C.textDark}}>Welcome</div><div style={{fontSize:10,color:C.muted}}>John Doe · Admin</div></div>
           </div>
         </div>
       </div>
@@ -2205,7 +1903,7 @@ export default function App(){
         <aside style={{width:175,flexShrink:0,background:C.white,borderRight:`1px solid ${C.border}`,display:"flex",flexDirection:"column",overflow:"hidden"}}>
           <div style={{padding:"10px 8px",borderBottom:`1px solid ${C.border}`}}/>
           <div style={{padding:"8px 8px"}}>
-            {navTopItems.map(n=>{const isActive=activeTopNav===n.label;return(<div key={n.label} className="nav-item" onClick={()=>setActiveTopNav(prev=>prev===n.label?null:n.label)} style={{display:"flex",alignItems:"center",gap:9,padding:"8px 12px",borderRadius:5,fontSize:11,fontWeight:isActive?700:500,color:isActive?C.white:C.textMid,cursor:"pointer",marginBottom:3,background:isActive?C.accent:"transparent"}}><Icon name={n.icon} size={14} color={isActive?C.white:C.textMid}/>{n.label}</div>);})}
+            {navTopItems.map(n=>{const isActive=activeTopNav===n.label;return(<div key={n.label} className="nav-item" onClick={()=>setActiveTopNav(prev=>prev===n.label?null:n.label)} style={{display:"flex",alignItems:"center",gap:9,padding:"8px 12px",borderRadius:5,fontSize:11,fontWeight:isActive?700:500,color:isActive?C.white:C.textMid,cursor:"pointer",marginBottom:3,background:isActive?C.accent:"transparent"}}><span style={{fontSize:12}}>{n.icon}</span>{n.label}</div>);})}
           </div>
           <div style={{padding:"0 8px",marginTop:4,overflowY:"auto",flex:1}}>
             <div style={{fontSize:9,fontWeight:700,color:C.muted,textTransform:"uppercase",letterSpacing:"0.6px",padding:"6px 10px 2px"}}>Units</div>
@@ -2215,7 +1913,7 @@ export default function App(){
               const setItem=unit==="CDU"?setActiveCDUNav:setActiveDCUNav;
               return(<div key={unit}>
                 <div onClick={()=>{setActiveUnit(unit);setActiveTopNav(null);}} style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"8px 12px",borderRadius:5,fontSize:11,fontWeight:500,color:C.textMid,cursor:"pointer",marginBottom:2}}>
-                  <span style={{display:"flex",alignItems:"center",gap:5}}><Icon name="build" size={12} color={C.muted}/>{unit}</span><span style={{fontSize:9,color:C.muted}}>{isUnitActive?"▲":"▼"}</span>
+                  <span>🔧 {unit}</span><span style={{fontSize:9,color:C.muted}}>{isUnitActive?"▲":"▼"}</span>
                 </div>
                 {isUnitActive&&items.map(item=>(<div key={item} className="nav-sub" onClick={()=>setItem(item)} style={{padding:"7px 10px 7px 26px",borderRadius:5,fontSize:11,fontWeight:activeItem===item?700:400,color:activeItem===item?C.accent:C.textMid,background:activeItem===item?C.accentLight:"transparent",marginBottom:2,cursor:"pointer"}}>{item}</div>))}
               </div>);
@@ -2235,11 +1933,11 @@ export default function App(){
             for(let d=1;d<=daysInMo;d++)cells.push(d);
             while(cells.length%7!==0)cells.push(null);
             return(
-              <div style={{height:36,flexShrink:0,background:C.white,borderBottom:`1px solid ${C.border}`,display:"flex",alignItems:"center",padding:"0 16px",position:"relative"}}>
+              <div style={{height:48,flexShrink:0,background:C.white,borderBottom:`1px solid ${C.border}`,display:"flex",alignItems:"center",padding:"0 20px",position:"relative"}}>
                 <div style={{display:"flex",alignItems:"center",gap:10,flex:1}}>
                   <div style={{fontSize:13,fontWeight:800,color:C.textDark,textTransform:"uppercase",letterSpacing:"0.4px"}}>{currentNav}</div>
                   <span style={{color:C.border}}>|</span>
-                  <div style={{fontSize:10,color:C.muted}}>GENERAL REFINERY</div>
+                  <div style={{fontSize:10,color:C.muted}}>TANSEIN REFINERY</div>
                 </div>
                 <div style={{position:"absolute",left:"50%",transform:"translateX(-50%)"}}>
                   {!showDeveloperInfo&&activeUnit==="DCU"&&activeDCUNav==="OVERVIEW"&&(
@@ -2255,10 +1953,10 @@ export default function App(){
                     <span style={{color:C.accent,fontWeight:600}}>{today.toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"})} · {today.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"})}</span>
                   </div>
                   <div style={{display:"flex",gap:8,alignItems:"center"}}>
-                    <span style={{cursor:"pointer",opacity:0.7,display:"inline-flex"}}><Icon name="warning_amber" size={18}/></span>
-                    <span onClick={()=>setShowCal(p=>!p)} style={{cursor:"pointer",opacity:showCal?1:0.7,color:showCal?C.accent:"inherit",position:"relative",display:"inline-flex"}}><Icon name="calendar_today" size={18}/></span>
-                    <span style={{cursor:"pointer",opacity:0.7,display:"inline-flex"}}><Icon name="notifications" size={18}/></span>
-                    <span style={{cursor:"pointer",opacity:0.7,display:"inline-flex"}}><Icon name="notifications_off" size={18}/></span>
+                    <span style={{fontSize:15,cursor:"pointer",opacity:0.7}}>⚠️</span>
+                    <span onClick={()=>setShowCal(p=>!p)} style={{fontSize:15,cursor:"pointer",opacity:showCal?1:0.7,color:showCal?C.accent:"inherit",position:"relative"}}>📅</span>
+                    <span style={{fontSize:15,cursor:"pointer",opacity:0.7}}>🔔</span>
+                    <span style={{fontSize:15,cursor:"pointer",opacity:0.7}}>🔕</span>
                   </div>
                   <div style={{display:"flex",gap:5}}>
                     <div style={{padding:"2px 8px",background:"#fff3e8",border:"1px solid #ffd08a",borderRadius:4,textAlign:"center"}}>
@@ -2299,70 +1997,70 @@ export default function App(){
           {!showDeveloperInfo && activeUnit==="DCU" && activeDCUNav==="CONFIGURATIONS" && <ConfigurationsPage/>}
 
           {!showDeveloperInfo && activeUnit==="DCU" && activeDCUNav==="OVERVIEW" && (
-            <div style={{flex:1,overflowY:"auto",padding:"8px",display:"flex",flexDirection:"column",gap:8,background:"#FFFFF0"}}>
-              <div style={{display:"flex",gap:8}}>
-                <div onClick={handleGaugeClick} style={{flex:1,cursor:"pointer",borderRadius:8,padding:"9px 14px",background:activeGauge?`linear-gradient(135deg,${C.accent},${C.accent})`:"linear-gradient(135deg,#e8f5fb,#e8f5fb)",border:`1px solid ${activeGauge?C.accent:C.border}`,boxShadow:activeGauge?"0 2px 6px rgba(0,153,204,0.25)":"0 2px 6px rgba(0,0,0,0.12)",display:"flex",alignItems:"center",gap:10,transition:"all 0.15s",position:"relative",overflow:"hidden"}}>
-                  <div style={{width:36,height:36,borderRadius:"50%",background:activeGauge?"rgba(255,255,255,0.2)":"rgba(0,153,204,0.15)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><Icon name="settings" size={20} color={activeGauge?C.white:C.accent}/></div>
+            <div style={{flex:1,overflowY:"auto",padding:"14px",display:"flex",flexDirection:"column",gap:12,background:"#FFFFF0"}}>
+              <div style={{display:"flex",gap:12}}>
+                <div onClick={handleGaugeClick} style={{flex:1,cursor:"pointer",borderRadius:8,padding:"16px 18px",background:activeGauge?`linear-gradient(135deg,${C.accent},${C.navyMid})`:"linear-gradient(135deg,#e8f5fb,#D3DFE4)",border:`1px solid ${activeGauge?C.accent:C.border}`,boxShadow:activeGauge?"0 2px 6px rgba(0,153,204,0.25)":"0 2px 6px rgba(0,0,0,0.12)",display:"flex",alignItems:"center",gap:14,transition:"all 0.15s",position:"relative",overflow:"hidden"}}>
+                  <div style={{width:48,height:48,borderRadius:"50%",background:activeGauge?"rgba(255,255,255,0.2)":"rgba(0,153,204,0.15)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:22,flexShrink:0}}>⚙️</div>
                   <div>
-                    <div style={{fontSize:15,fontWeight:800,color:activeGauge?C.white:C.textDark,lineHeight:1}}>{(d.hgi+45).toFixed(1)}%</div>
-                    <div style={{fontSize:9,fontWeight:700,color:activeGauge?"rgba(255,255,255,0.8)":C.accentDim,textTransform:"uppercase",letterSpacing:"0.4px",marginTop:2}}>PROCESS EFFICIENCY</div>
-                    <div style={{fontSize:9,color:activeGauge?"rgba(255,255,255,0.65)":C.textDark,marginTop:2}}>PREDICTED PRODUCTION OPPORTUNITY</div>
-                    <div style={{fontSize:10,fontWeight:700,color:activeGauge?C.white:C.accent,marginTop:1}}>{((d.hgi/d.upper)*10).toFixed(1)} MT/DAY</div>
+                    <div style={{fontSize:18,fontWeight:800,color:activeGauge?C.white:C.textDark,lineHeight:1}}>{(d.prediction??72.4).toFixed(1)}%</div>
+                    <div style={{fontSize:11,fontWeight:700,color:activeGauge?"rgba(255,255,255,0.8)":C.accentDim,textTransform:"uppercase",letterSpacing:"0.4px",marginTop:3}}>PROCESS EFFICIENCY</div>
+                    <div style={{fontSize:10,color:activeGauge?"rgba(255,255,255,0.65)":C.textDark,marginTop:4}}>PREDICTED PRODUCTION OPPORTUNITY</div>
+                    <div style={{fontSize:12,fontWeight:700,color:activeGauge?C.white:C.accent,marginTop:2}}>{((d.prediction/d.upper)*100).toFixed(1)} MT/DAY</div>
                   </div>
-                  {activeGauge&&<div style={{position:"absolute",top:6,right:8,width:14,height:14,borderRadius:"50%",background:"rgba(255,255,255,0.3)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:8,color:C.white}}>✓</div>}
+                  {activeGauge&&<div style={{position:"absolute",top:8,right:10,width:16,height:16,borderRadius:"50%",background:"rgba(255,255,255,0.3)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:9,color:C.white}}>✓</div>}
                 </div>
-                <div onClick={()=>handleOpportunityClick("energy")} style={{flex:1,cursor:"pointer",borderRadius:8,padding:"9px 14px",background:activeOpportunity==="energy"?`linear-gradient(135deg,${C.accent},${C.accent})`:"linear-gradient(135deg,#e8f5fb,#e8f5fb)",border:`1px solid ${activeOpportunity==="energy"?C.accent:C.border}`,boxShadow:activeOpportunity==="energy"?"0 2px 6px rgba(0,153,204,0.35)":"0 2px 6px rgba(0,0,0,0.12)",display:"flex",alignItems:"center",gap:10,transition:"all 0.15s"}}>
-                  <div style={{width:36,height:36,borderRadius:"50%",background:activeOpportunity==="energy"?"rgba(255,255,255,0.2)":"rgba(0,153,204,0.15)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><Icon name="water_drop" size={20} color={activeOpportunity==="energy"?C.white:C.accent}/></div>
+                <div onClick={()=>handleOpportunityClick("energy")} style={{flex:1,cursor:"pointer",borderRadius:8,padding:"16px 18px",background:activeOpportunity==="energy"?`linear-gradient(135deg,${C.accent},${C.navyMid})`:"linear-gradient(135deg,#e8f5fb,#D3DFE4)",border:`1px solid ${activeOpportunity==="energy"?C.accent:C.border}`,boxShadow:activeOpportunity==="energy"?"0 2px 6px rgba(0,153,204,0.35)":"0 2px 6px rgba(0,0,0,0.12)",display:"flex",alignItems:"center",gap:14,transition:"all 0.15s"}}>
+                  <div style={{width:48,height:48,borderRadius:"50%",background:activeOpportunity==="energy"?"rgba(255,255,255,0.2)":"rgba(0,153,204,0.15)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:22,flexShrink:0}}>💧</div>
                   <div>
-                    <div style={{fontSize:15,fontWeight:800,color:activeOpportunity==="energy"?C.white:C.textDark,lineHeight:1}}>95.6%</div>
-                    <div style={{fontSize:9,fontWeight:700,color:activeOpportunity==="energy"?"rgba(255,255,255,0.8)":C.accentDim,textTransform:"uppercase",letterSpacing:"0.4px",marginTop:2}}>ENERGY EFFICIENCY</div>
-                    <div style={{fontSize:9,color:activeOpportunity==="energy"?"rgba(255,255,255,0.65)":C.textDark,marginTop:2}}>PREDICTED ENERGY REDUCTION OPPORTUNITY</div>
-                    <div style={{fontSize:10,fontWeight:700,color:activeOpportunity==="energy"?C.white:C.accent,marginTop:1}}>372 MMBTU/DAY</div>
-                  </div>
-                </div>
-                <div onClick={()=>handleOpportunityClick("co2")} style={{flex:1,cursor:"pointer",borderRadius:8,padding:"9px 14px",background:activeOpportunity==="co2"?`linear-gradient(135deg,${C.accent},${C.accent})`:"linear-gradient(135deg,#e8f5fb,#e8f5fb)",border:`1px solid ${activeOpportunity==="co2"?C.accent:C.border}`,boxShadow:activeOpportunity==="co2"?"0 2px 6px rgba(0,153,204,0.35)":"0 2px 6px rgba(0,0,0,0.12)",display:"flex",alignItems:"center",gap:10,transition:"all 0.15s"}}>
-                  <div style={{width:36,height:36,borderRadius:"50%",background:activeOpportunity==="co2"?"rgba(255,255,255,0.2)":"rgba(0,153,204,0.15)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><Icon name="eco" size={20} color={activeOpportunity==="co2"?C.white:C.accent}/></div>
-                  <div>
-                    <div style={{fontSize:15,fontWeight:800,color:activeOpportunity==="co2"?C.white:C.textDark,lineHeight:1}}>96.6%</div>
-                    <div style={{fontSize:9,fontWeight:700,color:activeOpportunity==="co2"?"rgba(255,255,255,0.8)":C.accentDim,textTransform:"uppercase",letterSpacing:"0.4px",marginTop:2}}>ENVIRONMENT EFFICIENCY</div>
-                    <div style={{fontSize:9,color:activeOpportunity==="co2"?"rgba(255,255,255,0.65)":C.textDark,marginTop:2}}>PREDICTED CO₂ REDUCTION OPPORTUNITY</div>
-                    <div style={{fontSize:10,fontWeight:700,color:activeOpportunity==="co2"?C.white:C.accent,marginTop:1}}>{d.houronline?.toFixed(2)??"—"} MT/DAY</div>
+                    <div style={{fontSize:18,fontWeight:800,color:activeOpportunity==="energy"?C.white:C.textDark,lineHeight:1}}>95.6%</div>
+                    <div style={{fontSize:11,fontWeight:700,color:activeOpportunity==="energy"?"rgba(255,255,255,0.8)":C.accentDim,textTransform:"uppercase",letterSpacing:"0.4px",marginTop:3}}>ENERGY EFFICIENCY</div>
+                    <div style={{fontSize:10,color:activeOpportunity==="energy"?"rgba(255,255,255,0.65)":C.textDark,marginTop:4}}>PREDICTED ENERGY REDUCTION OPPORTUNITY</div>
+                    <div style={{fontSize:12,fontWeight:700,color:activeOpportunity==="energy"?C.white:C.accent,marginTop:2}}>372 MMBTU/DAY</div>
                   </div>
                 </div>
-                <div style={{flex:0.7,borderRadius:8,padding:"9px 14px",background:"linear-gradient(135deg,#e8f5fb,#e8f5fb)",border:`1px solid ${C.border}`,boxShadow:"0 2px 6px rgba(0,0,0,0.12)",display:"flex",alignItems:"center",gap:10}}>
-                  <div style={{width:36,height:36,borderRadius:"50%",background:"rgba(249,115,22,0.12)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><Icon name="warning_amber" size={20} color={C.orange}/></div>
+                <div onClick={()=>handleOpportunityClick("co2")} style={{flex:1,cursor:"pointer",borderRadius:8,padding:"16px 18px",background:activeOpportunity==="co2"?`linear-gradient(135deg,${C.accent},${C.navyMid})`:"linear-gradient(135deg,#e8f5fb,#D3DFE4)",border:`1px solid ${activeOpportunity==="co2"?C.accent:C.border}`,boxShadow:activeOpportunity==="co2"?"0 2px 6px rgba(0,153,204,0.35)":"0 2px 6px rgba(0,0,0,0.12)",display:"flex",alignItems:"center",gap:14,transition:"all 0.15s"}}>
+                  <div style={{width:48,height:48,borderRadius:"50%",background:activeOpportunity==="co2"?"rgba(255,255,255,0.2)":"rgba(0,153,204,0.15)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:22,flexShrink:0}}>🌱</div>
                   <div>
-                    <div style={{fontSize:15,fontWeight:800,color:alarmColor==="green"?C.green:alarmColor==="red"?C.red:C.orange,lineHeight:1}}>4</div>
-                    <div style={{fontSize:9,fontWeight:700,color:C.muted,textTransform:"uppercase",letterSpacing:"0.4px",marginTop:2}}>ACTIVE DEVIATION</div>
-                    <div style={{fontSize:9,color:C.textDark,marginTop:2}}>OVERDUE DEVIATION</div>
-                    <div style={{fontSize:10,fontWeight:700,color:alarmColor==="green"?C.green:alarmColor==="red"?C.red:C.orange,marginTop:1}}>0</div>
+                    <div style={{fontSize:18,fontWeight:800,color:activeOpportunity==="co2"?C.white:C.textDark,lineHeight:1}}>96.6%</div>
+                    <div style={{fontSize:11,fontWeight:700,color:activeOpportunity==="co2"?"rgba(255,255,255,0.8)":C.accentDim,textTransform:"uppercase",letterSpacing:"0.4px",marginTop:3}}>ENVIRONMENT EFFICIENCY</div>
+                    <div style={{fontSize:10,color:activeOpportunity==="co2"?"rgba(255,255,255,0.65)":C.textDark,marginTop:4}}>PREDICTED CO₂ REDUCTION OPPORTUNITY</div>
+                    <div style={{fontSize:12,fontWeight:700,color:activeOpportunity==="co2"?C.white:C.accent,marginTop:2}}>{d.houronline?.toFixed(2)??"—"} MT/DAY</div>
+                  </div>
+                </div>
+                <div style={{flex:0.7,borderRadius:8,padding:"16px 18px",background:"linear-gradient(135deg,#e8f5fb,#D3DFE4)",border:`1px solid ${C.border}`,boxShadow:"0 2px 6px rgba(0,0,0,0.12)",display:"flex",alignItems:"center",gap:14}}>
+                  <div style={{width:48,height:48,borderRadius:"50%",background:"rgba(249,115,22,0.12)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:22,flexShrink:0}}>⚠️</div>
+                  <div>
+                    <div style={{fontSize:18,fontWeight:800,color:alarmColor==="green"?C.green:alarmColor==="red"?C.red:C.orange,lineHeight:1}}>4</div>
+                    <div style={{fontSize:11,fontWeight:700,color:C.muted,textTransform:"uppercase",letterSpacing:"0.4px",marginTop:3}}>ACTIVE DEVIATION</div>
+                    <div style={{fontSize:10,color:C.textDark,marginTop:4}}>OVERDUE DEVIATION</div>
+                    <div style={{fontSize:12,fontWeight:700,color:alarmColor==="green"?C.green:alarmColor==="red"?C.red:C.orange,marginTop:2}}>0</div>
                   </div>
                 </div>
               </div>
 
-              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8}}>
-                <div style={{background:C.white,borderRadius:8,padding:8,border:`1px solid ${C.border}`}}><SectionHeader title="Performance KPIs"/><div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gridAutoRows:"56px",gap:6,maxHeight:"180px",overflowY:"auto",paddingRight:4}}><KPICard label="Liquid Yield" actual={d.hgi-3} unit="%"/><KPICard label="Coke Yield" actual={d.cokeyield} unit="%"/><KPICard label="Thermal Efficiency" actual="89" unit="%"/><KPICard label="Capacity Utilization" actual={`${d.capacityutilization}`} unit="%"/><KPICard label="Energy Specific Consumption" actual={`${d.specificenergyconsumption}`} unit=""/><KPICard label="Specific Fuel Consumption" actual={d.specificfuelconsumption} unit="t/d"/></div></div>
-                <div style={{background:C.white,borderRadius:8,padding:8,border:`1px solid ${C.border}`}}><SectionHeader title="Predicted KPIs"/><div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gridAutoRows:"56px",gap:6,maxHeight:"180px",overflowY:"auto",paddingRight:4}}><KPICard label="Coke Drum HGI" actual={d.hgi} trendKey="hgi" onTrendClick={setKpiTrendKey}/><KPICard label="Coke Drum Outage" actual={d.cokedrum_outage_predicted} unit="ft"/><KPICard label="Coke Drum Fouling Index" actual={d.hgi-22}/><KPICard label="Furnace Runlength" actual="14" optimum="32"/><KPICard label="Foamover Probability" actual="10" unit="%"/><KPICard label="Hour Online" actual={d.houronline} unit="hrs" trendKey="houronline" onTrendClick={setKpiTrendKey}/></div></div>
-                <div style={{background:C.white,borderRadius:8,padding:8,border:`1px solid ${C.border}`}}>
-                  {activeGauge?(<><SectionHeader title="Key Parameters – Process"/><div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gridAutoRows:"56px",gap:6,maxHeight:"180px",overflowY:"auto",paddingRight:4}}><KPICard label="Fresh Feed" actual={d.freshcharge} unit="BPD" trendKey="freshcharge" onTrendClick={setKpiTrendKey}/><KPICard label="Drum Inlet Temp" actual={d.inlettemp} unit="deg F" trendKey="inlettemp" onTrendClick={setKpiTrendKey}/><KPICard label="Drum Inlet Pressure" actual={d.inletpress} unit="psig" trendKey="inletpress" onTrendClick={setKpiTrendKey}/><KPICard label="Drum Outlet Temp" actual={d.outlettemp} unit="deg F" trendKey="outlettemp" onTrendClick={setKpiTrendKey}/><KPICard label="Drum Outlet Pressure" actual={d.outletpress} unit="psig" trendKey="outletpress" onTrendClick={setKpiTrendKey}/><KPICard label="Recycle Ratio" actual={d.residapi} unit=""/><KPICard label="SHC Ratio" actual="0.32" unit=""/><KPICard label="CPR" actual="1.2" unit=""/><KPICard label="Quench Flow" actual={d.residapi} unit="" highlight/><KPICard label="HIC Valve Opening" actual="15" unit="%" highlight/></div></>)
-                  :activeOpportunity?(<><SectionHeader title={`Key Parameters – ${activeOpportunity==="energy"?"Energy":"Environment"}`}/><div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gridAutoRows:"56px",gap:6,maxHeight:"180px",overflowY:"auto",paddingRight:4}}><KPICard label="Damper Opening" actual="88" unit="%"/><KPICard label="Arc O2" actual="3.7" unit=""/><KPICard label="Fired Duty" actual={d.residapi} unit=""/><KPICard label="Crossover Temperature" actual={d.residapi} unit=""/><KPICard label="Bridge Wall Temperature" actual={d.residapi} unit=""/></div></>)
-                  :(<><SectionHeader title="Key Parameters – Process"/><div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gridAutoRows:"56px",gap:6,maxHeight:"180px",overflowY:"auto",paddingRight:4}}><KPICard label="Fresh Feed" actual={d.freshcharge} unit="BPD" trendKey="freshcharge" onTrendClick={setKpiTrendKey}/><KPICard label="Drum Inlet Temp" actual={d.inlettemp} unit="deg F" trendKey="inlettemp" onTrendClick={setKpiTrendKey}/><KPICard label="Drum Inlet Pressure" actual={d.inletpress} unit="psig" trendKey="inletpress" onTrendClick={setKpiTrendKey}/><KPICard label="Drum Outlet Temp" actual={d.outlettemp} unit="deg F" trendKey="outlettemp" onTrendClick={setKpiTrendKey}/><KPICard label="Drum Outlet Pressure" actual={d.outletpress} unit="psig" trendKey="outletpress" onTrendClick={setKpiTrendKey}/><KPICard label="Recycle Ratio" actual={d.residapi} unit=""/><KPICard label="Damper Opening" actual="88" unit="%" highlight/><KPICard label="Arc O2" actual="3.7" unit="" highlight/><KPICard label="Fired Duty" actual={d.residapi} unit="" highlight/><KPICard label="HIC Valve Opening" actual="15" unit="%" highlight/></div></>)}
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:12}}>
+                <div style={{background:C.white,borderRadius:8,padding:12,border:`1px solid ${C.border}`}}><SectionHeader title="Performance KPIs"/><div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,maxHeight:"250px",overflowY:"auto",paddingRight:4}}><KPICard label="Liquid Yield" actual={d.prediction-3} unit="%"/><KPICard label="Coke Yield" actual={d.cokeyield} unit="%"/><KPICard label="Thermal Efficiency" actual="89" unit="%"/><KPICard label="Capacity Utilization" actual={`${d.capacityutilization}`} unit="%"/><KPICard label="Energy Specific Consumption" actual={`${d.specificenergyconsumption}`} unit=""/><KPICard label="Specific Fuel Consumption" actual={d.specificfuelconsumption} unit="t/d"/></div></div>
+                <div style={{background:C.white,borderRadius:8,padding:12,border:`1px solid ${C.border}`}}><SectionHeader title="Predicted KPIs"/><div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,maxHeight:"250px",overflowY:"auto",paddingRight:4}}><KPICard label="Coke Drum HGI" actual={d.prediction} trendKey="hgi" onTrendClick={setKpiTrendKey}/><KPICard label="Coke Drum Outage" actual={d.cokedrum_outage_predicted} unit="ft"/><KPICard label="Coke Drum Fouling Index" actual={d.prediction-22}/><KPICard label="Furnace Runlength" actual="14" optimum="32"/><KPICard label="Foamover Probability" actual="10" unit="%"/><KPICard label="Hour Online" actual={d.houronline} unit="hrs" trendKey="houronline" onTrendClick={setKpiTrendKey}/></div></div>
+                <div style={{background:C.white,borderRadius:8,padding:12,border:`1px solid ${C.border}`}}>
+                  {activeGauge?(<><SectionHeader title="Key Parameters – Process"/><div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,maxHeight:"250px",overflowY:"auto",paddingRight:4}}><KPICard label="Fresh Feed" actual={d.freshcharge} unit="BPD" trendKey="freshcharge" onTrendClick={setKpiTrendKey}/><KPICard label="Drum Inlet Temp" actual={d.inlettemp} unit="deg F" trendKey="inlettemp" onTrendClick={setKpiTrendKey}/><KPICard label="Drum Inlet Pressure" actual={d.inletpress} unit="psig" trendKey="inletpress" onTrendClick={setKpiTrendKey}/><KPICard label="Drum Outlet Temp" actual={d.outlettemp} unit="deg F" trendKey="outlettemp" onTrendClick={setKpiTrendKey}/><KPICard label="Drum Outlet Pressure" actual={d.outletpress} unit="psig" trendKey="outletpress" onTrendClick={setKpiTrendKey}/><KPICard label="Recycle Ratio" actual={d.residapi} unit=""/><KPICard label="SHC Ratio" actual="0.32" unit=""/><KPICard label="CPR" actual="1.2" unit=""/><KPICard label="Quench Flow" actual={d.residapi} unit="" highlight/><KPICard label="HIC Valve Opening" actual="15" unit="%" highlight/></div></>)
+                  :activeOpportunity?(<><SectionHeader title={`Key Parameters – ${activeOpportunity==="energy"?"Energy":"Environment"}`}/><div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,maxHeight:"250px",overflowY:"auto",paddingRight:4}}><KPICard label="Damper Opening" actual="88" unit="%"/><KPICard label="Arc O2" actual="3.7" unit=""/><KPICard label="Fired Duty" actual={d.residapi} unit=""/><KPICard label="Crossover Temperature" actual={d.residapi} unit=""/><KPICard label="Bridge Wall Temperature" actual={d.residapi} unit=""/></div></>)
+                  :(<><SectionHeader title="Key Parameters – Process"/><div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,maxHeight:"250px",overflowY:"auto",paddingRight:4}}><KPICard label="Fresh Feed" actual={d.freshcharge} unit="BPD" trendKey="freshcharge" onTrendClick={setKpiTrendKey}/><KPICard label="Drum Inlet Temp" actual={d.inlettemp} unit="deg F" trendKey="inlettemp" onTrendClick={setKpiTrendKey}/><KPICard label="Drum Inlet Pressure" actual={d.inletpress} unit="psig" trendKey="inletpress" onTrendClick={setKpiTrendKey}/><KPICard label="Drum Outlet Temp" actual={d.outlettemp} unit="deg F" trendKey="outlettemp" onTrendClick={setKpiTrendKey}/><KPICard label="Drum Outlet Pressure" actual={d.outletpress} unit="psig" trendKey="outletpress" onTrendClick={setKpiTrendKey}/><KPICard label="Recycle Ratio" actual={d.residapi} unit=""/><KPICard label="Damper Opening" actual="88" unit="%" highlight/><KPICard label="Arc O2" actual="3.7" unit="" highlight/><KPICard label="Fired Duty" actual={d.residapi} unit="" highlight/><KPICard label="HIC Valve Opening" actual="15" unit="%" highlight/></div></>)}
                 </div>
               </div>
 
-              <div style={{display:"grid",gridTemplateColumns:"1.2fr 1fr",gap:8}}>
-                <div style={{background:C.white,borderRadius:8,padding:8,border:`1px solid ${C.border}`}}>
+              <div style={{display:"grid",gridTemplateColumns:"1.2fr 1fr",gap:12}}>
+                <div style={{background:C.white,borderRadius:8,padding:12,border:`1px solid ${C.border}`}}>
                   <SectionHeader title="Actionables – Process"/>
-                  <table style={{width:"100%",borderCollapse:"collapse",fontSize:11}}><thead><tr>{["KPI","CAUSE","ACTUAL","OPTIMUM","SUGGESTIONS"].map(h=>(<th key={h} style={{background:"#f0f6fa",padding:"5px 8px",textAlign:"left",fontSize:9,fontWeight:700,color:C.muted,textTransform:"uppercase",letterSpacing:"0.5px",borderBottom:`1px solid ${C.border}`,borderRight:`1px solid ${C.border}`}}>{h}</th>))}</tr></thead><tbody>
-                    <tr className="action-row"><td style={{padding:"5px 8px",borderBottom:`1px solid ${C.border}`,borderRight:`1px solid ${C.border}`,fontWeight:700,verticalAlign:"top"}}>Low Coke Drum HGI</td><td style={{padding:"5px 8px",borderBottom:`1px solid ${C.border}`,borderRight:`1px solid ${C.border}`,color:C.textDark,fontSize:10,verticalAlign:"top"}}>{d.hgi>d.upper?"HIGH HGI VALUE":d.hgi<d.lower?"LOW HGI VALUE":"WITHIN RANGE"}</td><td style={{padding:"5px 8px",borderBottom:`1px solid ${C.border}`,fontWeight:600}}>{d.hgi?.toFixed(1)}</td><td style={{padding:"5px 8px",borderBottom:`1px solid ${C.border}`,color:C.muted,fontWeight:600}}>{optHGI.toFixed(1)}</td><td style={{padding:"5px 8px",borderBottom:`1px solid ${C.border}`,fontSize:10,color:C.textMid,lineHeight:1.4}}>{d.hgi>d.upper?"Increase Furnace COT ":d.hgi<d.lower?"Increase severity / optimize drum switching":"Operating within limits ✓"}</td></tr>
-                    
-                    <tr className="action-row"><td style={{padding:"5px 8px",fontWeight:700,verticalAlign:"top"}}>High Coke Drum Fouling Index</td><td style={{padding:"5px 8px",color:C.textDark,fontSize:10,verticalAlign:"top"}}>Coke Drum DP</td><td style={{padding:"5px 8px",fontWeight:600}}>{d.actualdp}</td><td style={{padding:"5px 8px",color:C.muted,fontWeight:600}}>{d.cleandp}</td><td style={{padding:"5px 8px",fontSize:10,color:C.textMid}}>{d.furnacecharge>optFurnace?"Increase HCGO Quench Flow":"Maintain current furnace charge rate"}</td></tr>
+                  <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}><thead><tr>{["KPI","CAUSE","ACTUAL","OPTIMUM","SUGGESTIONS"].map(h=>(<th key={h} style={{background:"#f0f6fa",padding:"7px 10px",textAlign:"left",fontSize:9,fontWeight:700,color:C.muted,textTransform:"uppercase",letterSpacing:"0.5px",borderBottom:`1px solid ${C.border}`,borderRight:`1px solid ${C.border}`}}>{h}</th>))}</tr></thead><tbody>
+                    <tr className="action-row"><td style={{padding:"8px 10px",borderBottom:`1px solid ${C.border}`,borderRight:`1px solid ${C.border}`,fontWeight:700,verticalAlign:"top"}}>HGI</td><td style={{padding:"8px 10px",borderBottom:`1px solid ${C.border}`,borderRight:`1px solid ${C.border}`,color:C.orange,fontSize:11,verticalAlign:"top"}}>{d.prediction>d.upper?"HIGH HGI VALUE":d.prediction<d.lower?"LOW HGI VALUE":"WITHIN RANGE"}</td><td style={{padding:"8px 10px",borderBottom:`1px solid ${C.border}`,fontWeight:600}}>{d.prediction?.toFixed(1)}</td><td style={{padding:"8px 10px",borderBottom:`1px solid ${C.border}`,color:C.accentDim,fontWeight:600}}>{optHGI.toFixed(1)}</td><td style={{padding:"8px 10px",borderBottom:`1px solid ${C.border}`,fontSize:11,color:C.textMid,lineHeight:1.5}}>{d.prediction>d.upper?"Reduce furnace COT / adjust severity":d.prediction<d.lower?"Increase severity / optimize drum switching":"Operating within limits ✓"}</td></tr>
+                    <tr className="action-row"><td style={{padding:"8px 10px",borderBottom:`1px solid ${C.border}`,fontWeight:700,verticalAlign:"top"}}>Drum</td><td style={{padding:"8px 10px",borderBottom:`1px solid ${C.border}`,color:C.orange,fontSize:11,verticalAlign:"top"}}>{d.drum_status?.drum1==="Offline"?"DRUM 1 OFFLINE":"DRUM STATUS OK"}</td><td style={{padding:"8px 10px",borderBottom:`1px solid ${C.border}`}}><span className={`badge badge-${d.drum_status?.drum1==="Online"?"green":"orange"}`}>{d.drum_status?.drum1??"—"}</span></td><td style={{padding:"8px 10px",borderBottom:`1px solid ${C.border}`,color:C.accentDim,fontWeight:600}}>Online</td><td style={{padding:"8px 10px",borderBottom:`1px solid ${C.border}`,fontSize:11,color:C.textMid}}>Monitor drum switching schedule to prevent unplanned downtime</td></tr>
+                    <tr className="action-row"><td style={{padding:"8px 10px",fontWeight:700,verticalAlign:"top"}}>Furnace</td><td style={{padding:"8px 10px",color:C.muted,fontSize:11,verticalAlign:"top"}}>CHARGE RATE</td><td style={{padding:"8px 10px",fontWeight:600}}>{d.furnacecharge}</td><td style={{padding:"8px 10px",color:C.accentDim,fontWeight:600}}>{optFurnace}</td><td style={{padding:"8px 10px",fontSize:11,color:C.textMid}}>{d.furnacecharge>optFurnace?"Consider reducing furnace charge to optimum level":"Maintain current furnace charge rate"}</td></tr>
                   </tbody></table>
                 </div>
                 <ChartPanel d={d} trend={data.trend} runlengthTrend={data.runlength?.trend??[]}/>
               </div>
 
-              <div style={{background:C.pageBg,borderRadius:6,padding:"4px 12px",display:"flex",alignItems:"center",gap:4,fontSize:9,fontWeight:600,flexShrink:0}}>
+              <div style={{background:C.pageBg,borderRadius:6,padding:"7px 16px",display:"flex",alignItems:"center",gap:4,fontSize:10,fontWeight:600,flexShrink:0}}>
                 <span style={{color:C.navy,fontWeight:700}}>FURNACE</span>
                 <span style={{color:"#1a7a3a",marginLeft:8}}>ONLINE: F1</span>
                 <span style={{color:"#7a3000",margin:"0 6px"}}>|</span>
